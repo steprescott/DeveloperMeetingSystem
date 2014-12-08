@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6254" systemVersion="14B25" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Invite" representedClassName="Invite" syncable="YES">
+        <attribute name="inviteID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="status" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <relationship name="meeting" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Meeting" inverseName="invites" inverseEntity="Meeting" syncable="YES"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="invites" inverseEntity="User" syncable="YES"/>
+    </entity>
+    <entity name="Meeting" representedClassName="Meeting" syncable="YES">
+        <attribute name="endDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="isPublic" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="meetingID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="startDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="subject" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="invites" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Invite" inverseName="meeting" inverseEntity="Invite" syncable="YES"/>
+        <relationship name="meetingRoom" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MeetingRoom" inverseName="meetings" inverseEntity="MeetingRoom" syncable="YES"/>
+    </entity>
+    <entity name="MeetingRoom" representedClassName="MeetingRoom" syncable="YES">
+        <attribute name="containsProjector" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="details" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="meetingRoomID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="meetings" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Meeting" inverseName="meetingRoom" inverseEntity="Meeting" syncable="YES"/>
+    </entity>
+    <entity name="User" representedClassName="User" syncable="YES">
+        <attribute name="contactNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="firstName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="role" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="invites" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Invite" inverseName="user" inverseEntity="Invite" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Meeting" positionX="-452" positionY="-59" width="128" height="148"/>
+        <element name="User" positionX="-74" positionY="-44" width="128" height="133"/>
+        <element name="MeetingRoom" positionX="-657" positionY="-29" width="128" height="118"/>
+        <element name="Invite" positionX="-263" positionY="-14" width="128" height="105"/>
+    </elements>
+</model>

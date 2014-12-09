@@ -7,6 +7,9 @@
 //
 
 #import "Meeting+DMS.h"
+#import "MeetingRoom+DMS.h"
+#import "User+DMS.h"
+#import "Invite+DMS.h"
 
 @interface ContextManager : SQKContextManager
 

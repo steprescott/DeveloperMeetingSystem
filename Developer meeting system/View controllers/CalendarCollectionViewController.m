@@ -61,11 +61,6 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
     self.fetchedResultsController.delegate = self;
     [self.fetchedResultsController performFetch:nil];
     
-//    NSManagedObjectContext *privateContext = [ContextManager newPrivateContext];
-//    NSDictionary *testMeetingData = [Meeting testMeetingData];
-//    [Meeting importMeetings:testMeetingData[@"meetings"] intoContext:privateContext];
-//    [privateContext save:NULL];
-    
     self.view.alpha = 0.0;
 }
 
@@ -80,23 +75,39 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
     }
     else if(self.fetchedResultsController.sections.count == 0)
     {
-        [[WebServiceClient sharedInstance] GETAllMeetingsSuccess:^(NSDictionary *JSON) {
-            NSLog(@"%s JSON %@", __PRETTY_FUNCTION__, JSON);
+        NSManagedObjectContext *context = [ContextManager newPrivateContext];
+        
+        [[WebServiceClient sharedInstance] GETAllMeetingsRoomsSuccess:^(NSDictionary *JSON) {
             NSArray *array = (NSArray *)JSON;
-            NSManagedObjectContext *context = [ContextManager newPrivateContext];
-            [Meeting importMeetings:array intoContext:context];
+            [MeetingRoom importMeetingRooms:array intoContext:context];
             
-            NSError *error;
-            [context save:&error];
-            
-            if(error)
-            {
-                NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
+            [[WebServiceClient sharedInstance] GETAllUserDetailsSuccess:^(NSDictionary *JSON) {
+                NSArray *array = (NSArray *)JSON;
+                [User importUsers:array intoContext:context];
+                
+                [[WebServiceClient sharedInstance] GETAllMeetingsSuccess:^(NSDictionary *JSON) {
+                    NSArray *array = (NSArray *)JSON;
+                    [Meeting importMeetings:array intoContext:context];
+                    
+                    NSError *error;
+                    [context save:&error];
+                    
+                    if(error)
+                    {
+                        NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
+                    }
+                }
+                                                                 failure:^(NSError *error) {
+                                                                     NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
+                                                                 }];
             }
+                                                                failure:^(NSError *error) {
+                                                                    NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
+                                                                }];
         }
-                                                         failure:^(NSError *error) {
-                                                             NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
-                                                         }];
+                                                              failure:^(NSError *error) {
+                                                                  NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
+                                                              }];
     }
     
     self.view.alpha = 1.0;

@@ -13,10 +13,11 @@
 
 @interface MeetingRoom : NSManagedObject
 
-@property (nonatomic, retain) NSString * name;
-@property (nonatomic, retain) NSString * meetingRoomID;
 @property (nonatomic, retain) NSNumber * containsProjector;
 @property (nonatomic, retain) NSString * details;
+@property (nonatomic, retain) NSString * meetingRoomID;
+@property (nonatomic, retain) NSString * name;
+@property (nonatomic, retain) NSNumber * hasBeenUpdated;
 @property (nonatomic, retain) NSSet *meetings;
 @end
 

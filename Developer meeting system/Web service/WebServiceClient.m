@@ -17,7 +17,9 @@ static NSString *debugUserTokenHost = @"13ad1268-46fe-4b7e-8350-37ea76f529c7";
 static NSString *debugUserTokenGuest = @"ce240744-ed9a-4bcd-85df-1d2437baaf6b";
 
 static NSString *tokenEndPoint = @"token";
-static NSString *mettingsEndPoint = @"meeting";
+static NSString *meetingsEndPoint = @"meeting";
+static NSString *meetingRoomEndPoint = @"meetingRoom";
+static NSString *userDetailsEndPoint = @"userDetails";
 static NSString *rolesEndPoint = @"role";
 
 @interface WebServiceClient ()
@@ -77,7 +79,45 @@ static NSString *rolesEndPoint = @"role";
 - (void)GETAllMeetingsSuccess:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     [self performRequestOfType:RequestTypeGET
-                    toEndPoint:mettingsEndPoint
+                    toEndPoint:meetingsEndPoint
+                withParameters:nil
+                       success:^(NSDictionary *JSON) {
+                           if(successBlock)
+                           {
+                               successBlock(JSON);
+                           }
+                       }
+                       failure:^(NSError *error) {
+                           if(failureBlock)
+                           {
+                               failureBlock(error);
+                           }
+                       }];
+}
+
+- (void)GETAllMeetingsRoomsSuccess:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock
+{
+    [self performRequestOfType:RequestTypeGET
+                    toEndPoint:meetingRoomEndPoint
+                withParameters:nil
+                       success:^(NSDictionary *JSON) {
+                           if(successBlock)
+                           {
+                               successBlock(JSON);
+                           }
+                       }
+                       failure:^(NSError *error) {
+                           if(failureBlock)
+                           {
+                               failureBlock(error);
+                           }
+                       }];
+}
+
+- (void)GETAllUserDetailsSuccess:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock
+{
+    [self performRequestOfType:RequestTypeGET
+                    toEndPoint:userDetailsEndPoint
                 withParameters:nil
                        success:^(NSDictionary *JSON) {
                            if(successBlock)
@@ -155,6 +195,22 @@ static NSString *rolesEndPoint = @"role";
                       failureBlock(error);
                   }
               }];
+    }
+    else if (requestType == RequestTypePUT)
+    {
+        [manager PUT:urlString
+          parameters:parameters
+             success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {
+                 if(successBlock)
+                 {
+                     successBlock(responseObject);
+                 }
+             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                 if(failureBlock)
+                 {
+                     failureBlock(error);
+                 }
+             }];
     }
 }
 

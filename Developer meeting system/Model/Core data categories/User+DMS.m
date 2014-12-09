@@ -18,10 +18,12 @@
               uniqueModelKey:@"username"
              uniqueRemoteKey:@"Username"
          propertySetterBlock:^(NSDictionary *dictionary, User *managedObject) {
-             managedObject.username = dictionary[@"username"];
-             managedObject.firstName = dictionary[@"firstName"];
-             managedObject.lastName = dictionary[@"lastName"];
-             managedObject.role = dictionary[@"role"];
+             managedObject.username = dictionary[@"Username"];
+             managedObject.firstName = dictionary[@"Firstname"];
+             managedObject.lastName = dictionary[@"Surname"];
+             managedObject.contactNumber = dictionary[@"ContactNumber"];
+             managedObject.role = dictionary[@"Role"];
+             managedObject.hasBeenUpdated = @YES;
          }
               privateContext:context
                        error:&error];
@@ -43,6 +45,7 @@
                                           value:username
                                         context:context
                                           error:&error];
+    user.hasBeenUpdated = @YES;
     
     if(error)
     {
@@ -50,6 +53,17 @@
     }
     
     return user;
+}
+
++ (NSSet *)usernamesForUsers:(NSSet *)users
+{
+    NSMutableSet *set = [NSMutableSet set];
+    
+    [users enumerateObjectsUsingBlock:^(User *user, BOOL *stop) {
+        [set addObject:[NSString stringWithFormat:@"%@", user.username]];
+    }];
+    
+    return set;
 }
 
 @end

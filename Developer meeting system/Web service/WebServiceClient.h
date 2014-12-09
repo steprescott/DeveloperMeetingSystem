@@ -10,7 +10,8 @@
 
 typedef NS_ENUM(NSUInteger, RequestType) {
     RequestTypeGET = 0,
-    RequestTypePOST
+    RequestTypePOST,
+    RequestTypePUT
 };
 
 @interface WebServiceClient : NSObject
@@ -46,6 +47,8 @@ typedef NS_ENUM(NSUInteger, RequestType) {
  *  @param failureBlock This is the block that will be called when the API endpoint returns anything other than a 200.
  */
 - (void)GETAllMeetingsSuccess:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock;
+- (void)GETAllMeetingsRoomsSuccess:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock;
+- (void)GETAllUserDetailsSuccess:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock;
 - (void)GETAllRolesSuccess:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock;
 
 @end

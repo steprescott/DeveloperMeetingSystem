@@ -18,6 +18,8 @@
 @dynamic meetingID;
 @dynamic startDate;
 @dynamic subject;
+@dynamic hasBeenUpdated;
+@dynamic notes;
 @dynamic invites;
 @dynamic meetingRoom;
 
@@ -25,4 +27,5 @@
 {
     return [self.startDate beginningOfDay];
 }
+
 @end

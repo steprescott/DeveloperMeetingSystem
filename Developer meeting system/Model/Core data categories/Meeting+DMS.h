@@ -7,12 +7,12 @@
 //
 
 #import "Meeting.h"
+#import "Invite+DMS.h"
 
 @interface Meeting (DMS)
 
-+ (NSDictionary *)testMeetingData;
 + (BOOL)importMeetings:(NSArray *)meetings intoContext:(NSManagedObjectContext *)context;
 
-- (NSDate *)day;
-
+- (NSSet *)invitesWithStatus:(InviteStatus)inviteStauts;
+- (NSSet *)usersInMeeting;
 @end

@@ -18,6 +18,8 @@
 @property (nonatomic, retain) NSString * meetingID;
 @property (nonatomic, retain) NSDate * startDate;
 @property (nonatomic, retain) NSString * subject;
+@property (nonatomic, retain) NSNumber * hasBeenUpdated;
+@property (nonatomic, retain) NSString * notes;
 @property (nonatomic, retain) NSSet *invites;
 @property (nonatomic, retain) MeetingRoom *meetingRoom;
 @end

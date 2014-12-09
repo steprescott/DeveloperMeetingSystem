@@ -10,40 +10,54 @@
 #import "TextFieldTableViewCell.h"
 #import "YesNoTableViewCell.h"
 #import "DateCellsController.h"
+#import "SelectableListTableViewController.h"
+#import "SearchableSelectableTableViewController.h"
+#import "TextViewViewController.h"
 
+#import "ContextManager.h"
 #import "Meeting+DMS.h"
 #import "MeetingRoom.h"
 
 typedef NS_ENUM(NSUInteger, TableViewSection) {
     TableViewSectionMeetingDetails = 0,
-    TableViewSectionAcceptedInvites,
-    TableViewSectionRejectedInvites,
     TableViewSectionInvites,
+    TableViewSectionAcceptedInvites,
+    TableViewSectionTentativeInvites,
+    TableViewSectionDeclinedInvites,
+    TableViewSectionActions,
     TableViewSectionCount
 };
 
 typedef NS_ENUM(NSUInteger, TableViewSectionMeetingDetailsRow) {
     TableViewSectionMeetingDetailsRowSubject = 0,
-    TableViewSectionMeetingDetailsRowLocation,
+    TableViewSectionMeetingDetailsRowRoom,
     TableViewSectionMeetingDetailsRowStartDate,
     TableViewSectionMeetingDetailsRowEndDate,
     TableViewSectionMeetingDetailsRowIsPublic,
+    TableViewSectionMeetingDetailsRowNotes,
     TableViewSectionMeetingDetailsRowCount
+};
+
+typedef NS_ENUM(NSUInteger, TableViewSectionActionsRow) {
+    TableViewSectionActionsRowInviteUser = 0,
+    TableViewSectionActionsRowDeleteMeeting,
 };
 
 static NSString *textFieldCellWithIdentifier = @"textFieldCell";
 static NSString *yesNoCellWithIdentifier = @"yesNoCell";
 static NSString *rightDetailCellWithIdentifier = @"rightDetailCell";
+static NSString *basicCellWithIdentifier = @"basicCell";
 
 @interface MeetingDetailsTableViewController () <UITableViewDataSource, UITableViewDelegate, DateCellsControllerDelegate>
 
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;
 @property (nonatomic, strong) DateCellsController *dateCellsController;
 @property (nonatomic, strong) NSIndexPath *subjectIndexPath;
-@property (nonatomic, strong) NSIndexPath *locationIndexPath;
-@property (nonatomic, strong) NSIndexPath *isPublicIndexPath;
+@property (nonatomic, strong) NSIndexPath *roomIndexPath;
 @property (nonatomic, strong) NSIndexPath *startDateIndexPath;
 @property (nonatomic, strong) NSIndexPath *endDateIndexPath;
+@property (nonatomic, strong) NSIndexPath *isPublicIndexPath;
+@property (nonatomic, strong) NSIndexPath *notesIndexPath;
 
 - (IBAction)doneButtonWasTapped:(id)sender;
 
@@ -61,13 +75,15 @@ static NSString *rightDetailCellWithIdentifier = @"rightDetailCell";
     
     self.subjectIndexPath = [NSIndexPath indexPathForRow:TableViewSectionMeetingDetailsRowSubject
                                                inSection:TableViewSectionMeetingDetails];
-    self.locationIndexPath = [NSIndexPath indexPathForRow:TableViewSectionMeetingDetailsRowLocation
+    self.roomIndexPath = [NSIndexPath indexPathForRow:TableViewSectionMeetingDetailsRowRoom
+                                            inSection:TableViewSectionMeetingDetails];
+    self.startDateIndexPath = [NSIndexPath indexPathForRow:TableViewSectionMeetingDetailsRowStartDate
+                                                 inSection:TableViewSectionMeetingDetails];
+    self.endDateIndexPath = [NSIndexPath indexPathForRow:TableViewSectionMeetingDetailsRowEndDate
                                                inSection:TableViewSectionMeetingDetails];
     self.isPublicIndexPath = [NSIndexPath indexPathForRow:TableViewSectionMeetingDetailsRowIsPublic
-                                               inSection:TableViewSectionMeetingDetails];
-    self.startDateIndexPath = [NSIndexPath indexPathForRow:TableViewSectionMeetingDetailsRowStartDate
-                                               inSection:TableViewSectionMeetingDetails];
-    self.endDateIndexPath = [NSIndexPath indexPathForRow:TableViewSectionMeetingDetailsRowEndDate
+                                                inSection:TableViewSectionMeetingDetails];
+    self.notesIndexPath = [NSIndexPath indexPathForRow:TableViewSectionMeetingDetailsRowNotes
                                                inSection:TableViewSectionMeetingDetails];
     
     self.dateCellsController = [[DateCellsController alloc] init];
@@ -85,13 +101,13 @@ static NSString *rightDetailCellWithIdentifier = @"rightDetailCell";
 
 - (IBAction)doneButtonWasTapped:(id)sender
 {
-    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    [self.dateCellsController hidePicker];
     
-    TextFieldTableViewCell *subjectCell = (TextFieldTableViewCell *)[self.tableView cellForRowAtIndexPath:self.subjectIndexPath];
-    TextFieldTableViewCell *locationCell = (TextFieldTableViewCell *)[self.tableView cellForRowAtIndexPath:self.locationIndexPath];
-    YesNoTableViewCell *isPublicCell = (YesNoTableViewCell *)[self.tableView cellForRowAtIndexPath:self.isPublicIndexPath];
+    TextFieldTableViewCell *subjectCell = (TextFieldTableViewCell *)[self.dateCellsController cellForIndexPath:self.subjectIndexPath ignoringPickerCells:YES];
+    YesNoTableViewCell *isPublicCell = (YesNoTableViewCell *)[self.dateCellsController cellForIndexPath:self.isPublicIndexPath ignoringPickerCells:YES];
     
     self.meeting.subject = subjectCell.textField.text;
+    self.meeting.isPublic = @([isPublicCell isYes]);
     
     NSError *error;
     [self.meeting.managedObjectContext save:&error];
@@ -100,6 +116,8 @@ static NSString *rightDetailCellWithIdentifier = @"rightDetailCell";
     {
         NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
     }
+    
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     
     if([self.delegate respondsToSelector:@selector(meetingDetailsFormDissmissed)])
     {
@@ -123,9 +141,84 @@ static NSString *rightDetailCellWithIdentifier = @"rightDetailCell";
             numberOfRows = TableViewSectionMeetingDetailsRowCount;
             break;
         }
+            
+        case TableViewSectionInvites:
+        {
+            numberOfRows = [self.meeting invitesWithStatus:InviteStatusInvited].count;
+            break;
+        }
+            
+        case TableViewSectionAcceptedInvites:
+        {
+            numberOfRows = [self.meeting invitesWithStatus:InviteStatusAccepted].count;
+            break;
+        }
+            
+        case TableViewSectionTentativeInvites:
+        {
+            numberOfRows = [self.meeting invitesWithStatus:InviteStatusTentative].count;
+            break;
+        }
+            
+        case TableViewSectionDeclinedInvites:
+        {
+            numberOfRows = [self.meeting invitesWithStatus:InviteStatusDeclined].count;
+            break;
+        }
+            
+        case TableViewSectionActions:
+        {
+            numberOfRows = 2;
+        }
     }
     
     return numberOfRows;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    NSString *title;
+    NSInteger numberOfRows = [self tableView:tableView numberOfRowsInSection:section];
+    
+    if(numberOfRows == 0)
+    {
+        return nil;
+    }
+    
+    switch (section)
+    {
+        case TableViewSectionInvites:
+        {
+            title = @"Invites";
+            break;
+        }
+            
+        case TableViewSectionAcceptedInvites:
+        {
+            title = @"Accepted invites";
+            break;
+        }
+            
+        case TableViewSectionTentativeInvites:
+        {
+            title = @"Tentative invites";
+            break;
+        }
+            
+        case TableViewSectionDeclinedInvites:
+        {
+            title = @"Declined invites";
+            break;
+        }
+            
+        case TableViewSectionActions:
+        {
+            title = @"Actions";
+            break;
+        }
+    }
+
+    return title;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -141,22 +234,19 @@ static NSString *rightDetailCellWithIdentifier = @"rightDetailCell";
                 case TableViewSectionMeetingDetailsRowSubject:
                 {
                     TextFieldTableViewCell *textFieldCell = (TextFieldTableViewCell *)[tableView dequeueReusableCellWithIdentifier:textFieldCellWithIdentifier forIndexPath:indexPath];
-
-                    textFieldCell.label.text = @"Subject :";
+                    textFieldCell.label.text = @"Subject";
                     textFieldCell.textField.text = self.meeting.subject;
                     
                     cell = textFieldCell;
                     break;
                 }
                     
-                case TableViewSectionMeetingDetailsRowLocation:
+                case TableViewSectionMeetingDetailsRowRoom:
                 {
-                    TextFieldTableViewCell *textFieldCell = (TextFieldTableViewCell *)[tableView dequeueReusableCellWithIdentifier:textFieldCellWithIdentifier forIndexPath:indexPath];
-                    
-                    textFieldCell.label.text = @"Location :";
-                    textFieldCell.textField.text = self.meeting.meetingRoom.name;
-                    
-                    cell = textFieldCell;
+                    cell = [tableView dequeueReusableCellWithIdentifier:rightDetailCellWithIdentifier forIndexPath:indexPath];
+                    cell.textLabel.text = @"Room";
+                    cell.detailTextLabel.text = self.meeting.meetingRoom.name;
+                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                     break;
                 }
                     
@@ -182,30 +272,93 @@ static NSString *rightDetailCellWithIdentifier = @"rightDetailCell";
                     
                     yesNoCell.label.text = @"Is public";
                     
+                    if([self.meeting.isPublic boolValue])
+                    {
+                        [yesNoCell setToYes];
+                    }
+                    
                     cell = yesNoCell;
+                    break;
+                }
+                
+                case TableViewSectionMeetingDetailsRowNotes:
+                {
+                    cell = [tableView dequeueReusableCellWithIdentifier:rightDetailCellWithIdentifier forIndexPath:indexPath];
+                    cell.textLabel.text = @"Notes";
+                    cell.detailTextLabel.text = self.meeting.notes;
+                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                     break;
                 }
             }
             break;
         }
             
-        case TableViewSectionAcceptedInvites:
+        case TableViewSectionInvites:
         {
-            break;
-        }
-        
-        case TableViewSectionRejectedInvites:
-        {
+            cell = [tableView dequeueReusableCellWithIdentifier:basicCellWithIdentifier forIndexPath:indexPath];
+            Invite *invite = (Invite *)[[self.meeting invitesWithStatus:InviteStatusInvited] allObjects][indexPath.row];
+            cell.textLabel.text = invite.user.username;
+            cell.textLabel.textAlignment = NSTextAlignmentLeft;
+            cell.textLabel.textColor = [UIColor blackColor];
             break;
         }
             
-        case TableViewSectionInvites:
+        case TableViewSectionAcceptedInvites:
         {
+            cell = [tableView dequeueReusableCellWithIdentifier:basicCellWithIdentifier forIndexPath:indexPath];
+            Invite *invite = (Invite *)[[self.meeting invitesWithStatus:InviteStatusAccepted] allObjects][indexPath.row];
+            cell.textLabel.text = invite.user.username;
+            cell.textLabel.textAlignment = NSTextAlignmentLeft;
+            cell.textLabel.textColor = [UIColor blackColor];
             break;
+        }
+        
+        case TableViewSectionTentativeInvites:
+        {
+            cell = [tableView dequeueReusableCellWithIdentifier:basicCellWithIdentifier forIndexPath:indexPath];
+            Invite *invite = (Invite *)[[self.meeting invitesWithStatus:InviteStatusTentative] allObjects][indexPath.row];
+            cell.textLabel.text = invite.user.username;
+            cell.textLabel.textAlignment = NSTextAlignmentLeft;
+            cell.textLabel.textColor = [UIColor blackColor];
+            break;
+        }
+            
+        case TableViewSectionDeclinedInvites:
+        {
+            cell = [tableView dequeueReusableCellWithIdentifier:basicCellWithIdentifier forIndexPath:indexPath];
+            Invite *invite = (Invite *)[[self.meeting invitesWithStatus:InviteStatusDeclined] allObjects][indexPath.row];
+            cell.textLabel.text = invite.user.username;
+            cell.textLabel.textAlignment = NSTextAlignmentLeft;
+            cell.textLabel.textColor = [UIColor blackColor];
+            break;
+        }
+        
+        case TableViewSectionActions:
+        {
+            cell = [tableView dequeueReusableCellWithIdentifier:basicCellWithIdentifier forIndexPath:indexPath];
+            
+            switch (indexPath.row)
+            {
+                case TableViewSectionActionsRowInviteUser:
+                {
+                    cell.textLabel.text = @"Invite user";
+                    cell.textLabel.textAlignment = NSTextAlignmentCenter;
+                    cell.textLabel.textColor = self.view.tintColor;
+                    break;
+                }
+                    
+                case TableViewSectionActionsRowDeleteMeeting:
+                {
+                    cell.textLabel.text = @"Delete meeting";
+                    cell.textLabel.textAlignment = NSTextAlignmentCenter;
+                    cell.textLabel.textColor = [UIColor redColor];
+                    break;
+                }
+            }
         }
     }
     
-    return cell ? cell : [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"defaultCell"];
+    return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -231,8 +384,19 @@ static NSString *rightDetailCellWithIdentifier = @"rightDetailCell";
                     break;
                 }
                     
-                case TableViewSectionMeetingDetailsRowLocation:
+                case TableViewSectionMeetingDetailsRowRoom:
                 {
+                    SearchableSelectableTableViewController *searchableSelectableTableViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"SelectableListTableViewController"];
+                    searchableSelectableTableViewController.classOfItems = [MeetingRoom class];
+                    searchableSelectableTableViewController.itemTextProperty = @"name";
+                    searchableSelectableTableViewController.itemSearchProperty = @"name";
+                    searchableSelectableTableViewController.didSelectItemBlock = ^void(id selectedItem, NSInteger selectedIndex) {
+                        
+                        self.meeting.meetingRoom = selectedItem;
+                        [self.tableView reloadData];
+                    };
+                    
+                    [self.navigationController showViewController:searchableSelectableTableViewController sender:self];
                     break;
                 }
                     
@@ -250,6 +414,19 @@ static NSString *rightDetailCellWithIdentifier = @"rightDetailCell";
                 {
                     break;
                 }
+                    
+                case TableViewSectionMeetingDetailsRowNotes:
+                {
+                    TextViewViewController *textViewViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"TextViewViewController"];
+                    textViewViewController.currentText = self.meeting.notes;
+                    textViewViewController.doneButtonWasTappedBlock = ^void(NSString *updatedText) {
+                        self.meeting.notes = updatedText;
+                        [self.tableView reloadData];
+                    };
+                    
+                    [self.navigationController showViewController:textViewViewController sender:self];
+                    break;
+                }
             }
             break;
         }
@@ -259,13 +436,41 @@ static NSString *rightDetailCellWithIdentifier = @"rightDetailCell";
             break;
         }
             
-        case TableViewSectionRejectedInvites:
+        case TableViewSectionDeclinedInvites:
         {
             break;
         }
             
         case TableViewSectionInvites:
         {
+            break;
+        }
+            
+        case TableViewSectionActions:
+        {
+            switch (indexPath.row)
+            {
+                case TableViewSectionActionsRowInviteUser:
+                {
+                    SearchableSelectableTableViewController *searchableSelectableTableViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"SelectableListTableViewController"];
+                    searchableSelectableTableViewController.classOfItems = [User class];
+                    searchableSelectableTableViewController.itemTextProperty = @"username";
+                    searchableSelectableTableViewController.itemSearchProperty = @"username";
+                    searchableSelectableTableViewController.filterItems = [User usernamesForUsers:[self.meeting usersInMeeting]];
+                    searchableSelectableTableViewController.didSelectItemBlock = ^void(id selectedItem, NSInteger selectedIndex) {
+                        
+                        [Invite createInviteForMeeting:self.meeting
+                                              withUser:selectedItem
+                                             forStatus:InviteStatusInvited
+                                           intoContext:self.meeting.managedObjectContext];
+                        
+                        [self.tableView reloadData];
+                    };
+                    
+                    [self.navigationController showViewController:searchableSelectableTableViewController sender:self];
+                    break;
+                }
+            }
             break;
         }
     }

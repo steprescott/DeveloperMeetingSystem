@@ -13,11 +13,12 @@
 
 @interface User : NSManagedObject
 
+@property (nonatomic, retain) NSString * contactNumber;
 @property (nonatomic, retain) NSString * firstName;
 @property (nonatomic, retain) NSString * lastName;
-@property (nonatomic, retain) NSString * username;
-@property (nonatomic, retain) NSString * contactNumber;
 @property (nonatomic, retain) NSString * role;
+@property (nonatomic, retain) NSString * username;
+@property (nonatomic, retain) NSNumber * hasBeenUpdated;
 @property (nonatomic, retain) NSSet *invites;
 @end
 

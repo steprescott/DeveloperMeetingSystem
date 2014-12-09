@@ -12,11 +12,12 @@
 
 @implementation User
 
+@dynamic contactNumber;
 @dynamic firstName;
 @dynamic lastName;
-@dynamic username;
-@dynamic contactNumber;
 @dynamic role;
+@dynamic username;
+@dynamic hasBeenUpdated;
 @dynamic invites;
 
 @end

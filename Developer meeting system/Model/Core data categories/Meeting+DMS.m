@@ -8,59 +8,26 @@
 
 #import "Meeting+DMS.h"
 #import "User+DMS.h"
-#import "Invite+DMS.h"
 #import "ContextManager.h"
 
 @implementation Meeting (DMS)
 
-+ (NSDictionary *)testMeetingData
-{
-    NSArray *fetchedMeetings = [[ContextManager mainContext] executeFetchRequest:[Meeting sqk_fetchRequest]
-                                                                            error:NULL];
-    if(fetchedMeetings.count > 0)
-    {
-        return @{@"meetings" : @[]};
-    }
-    
-    NSMutableArray *meetings = [NSMutableArray array];
-    NSDate *endOfLastMeeting;
-    
-    for (NSInteger i = 0; i < 100; i++)
-    {
-        NSString *meetingID = [[NSUUID UUID] UUIDString];
-        NSString *subject = [NSString stringWithFormat:@"Meeting %i", i + 1];
-        NSString *location = @"Some location";
-        NSDate *startDate;
-        NSDate *endDate;
-        
-        if(i == 0)
-        {
-            startDate = [NSDate dateWithTimeIntervalSinceNow:((60 * 60 * 48) * -1)];
-        }
-        else
-        {
-            startDate = [NSDate dateWithTimeInterval:(60 * 15) sinceDate:endOfLastMeeting];
-        }
-        
-        endDate = [NSDate dateWithTimeInterval:(60 * 30) sinceDate:startDate];
-        endOfLastMeeting = endDate;
-        
-        [meetings addObject:@{@"meetingId" : meetingID,
-                              @"subject" : subject,
-                              @"location" : location,
-                              @"startDate" : startDate,
-                              @"endDate" : endDate}];
-    }
-    
-    return @{@"meetings" : meetings};
-}
-
 + (BOOL)importMeetings:(NSArray *)meetings intoContext:(NSManagedObjectContext *)context
 {
+    NSError *error;
+    NSFetchRequest *request = [Meeting sqk_fetchRequest];
+    NSArray *objects = [context executeFetchRequest:request error:&error];
+    
+    if(error)
+    {
+        NSLog(@"Error when executing fetch request. %s %@", __PRETTY_FUNCTION__, error.localizedDescription);
+        return NO;
+    }
+    
+    [objects makeObjectsPerformSelector:@selector(setHasBeenUpdated:) withObject:@NO];
+    
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSZ"];
-    
-    NSError *error;
     
     [Meeting sqk_insertOrUpdate:meetings
                  uniqueModelKey:@"meetingID"
@@ -70,6 +37,8 @@
                 managedObject.subject = dictionary[@"Subject"];
                 managedObject.startDate = [dateFormatter dateFromString:dictionary[@"StartDateTime"]];
                 managedObject.endDate = [dateFormatter dateFromString:dictionary[@"EndDateTime"]];
+                managedObject.hasBeenUpdated = @YES;
+                managedObject.meetingRoom = [MeetingRoom meetingRoomWithName:dictionary[@"MeetingRoom"][@"Name"] inContext:context];
                 
                 NSArray *invitedUsers = dictionary[@"UsersInvited"];
                 NSArray *acceptedUsers = dictionary[@"UsersAccepted"];
@@ -120,9 +89,20 @@
     return YES;
 }
 
-- (NSDate *)day
+- (NSSet *)invitesWithStatus:(InviteStatus)inviteStauts
 {
-    return [self.startDate beginningOfDay];
+    return [self.invites filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"status = %i", inviteStauts]];
+}
+
+- (NSSet *)usersInMeeting
+{
+    NSMutableSet *set = [NSMutableSet set];
+    
+    [self.invites enumerateObjectsUsingBlock:^(Invite *invite, BOOL *stop) {
+        [set addObject:invite.user];
+    }];
+    
+    return set;
 }
 
 @end

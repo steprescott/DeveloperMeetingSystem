@@ -12,10 +12,11 @@
 
 @implementation MeetingRoom
 
-@dynamic name;
-@dynamic meetingRoomID;
 @dynamic containsProjector;
 @dynamic details;
+@dynamic meetingRoomID;
+@dynamic name;
+@dynamic hasBeenUpdated;
 @dynamic meetings;
 
 @end

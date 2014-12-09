@@ -12,9 +12,6 @@
 		4A207A491A31FF8100C7D8F0 /* ContextManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A207A481A31FF8100C7D8F0 /* ContextManager.m */; };
 		4A207A521A32111C00C7D8F0 /* MeetingDetailsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A207A511A32111C00C7D8F0 /* MeetingDetailsTableViewController.m */; };
 		4A33DCE01A35E20A0032D553 /* Invite.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A33DCDF1A35E20A0032D553 /* Invite.m */; };
-		4A33DCE61A35E20A0032D553 /* Meeting.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A33DCE51A35E20A0032D553 /* Meeting.m */; };
-		4A33DCE91A35E29B0032D553 /* MeetingRoom.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A33DCE81A35E29B0032D553 /* MeetingRoom.m */; };
-		4A33DCEC1A35E2F50032D553 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A33DCEB1A35E2F50032D553 /* User.m */; };
 		4A33DCEF1A35E32D0032D553 /* User+DMS.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A33DCEE1A35E32D0032D553 /* User+DMS.m */; };
 		4A33DCF21A35E54E0032D553 /* Invite+DMS.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A33DCF11A35E54E0032D553 /* Invite+DMS.m */; };
 		4A3862CA1A35AAC500513D13 /* TextFieldTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A3862C91A35AAC500513D13 /* TextFieldTableViewCell.m */; };
@@ -38,6 +35,13 @@
 		4A6E85671A2FEFA400FBF70D /* Gridline.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6E855D1A2FEFA400FBF70D /* Gridline.m */; };
 		4A6E85681A2FEFA400FBF70D /* TimeRowHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6E855F1A2FEFA400FBF70D /* TimeRowHeader.m */; };
 		4A6E85691A2FEFA400FBF70D /* TimeRowHeaderBackground.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6E85611A2FEFA400FBF70D /* TimeRowHeaderBackground.m */; };
+		4A6EC4E71A3611760000ADED /* MeetingRoom+DMS.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6EC4E61A3611760000ADED /* MeetingRoom+DMS.m */; };
+		4A6EC4EA1A3612870000ADED /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6EC4E91A3612870000ADED /* User.m */; };
+		4A6EC4ED1A3612880000ADED /* MeetingRoom.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6EC4EC1A3612880000ADED /* MeetingRoom.m */; };
+		4A6EC4F31A36568E0000ADED /* SelectableListTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6EC4F21A36568E0000ADED /* SelectableListTableViewController.m */; };
+		4A6EC4F61A3660CE0000ADED /* Meeting.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6EC4F51A3660CE0000ADED /* Meeting.m */; };
+		4A6EC4F91A3661CD0000ADED /* TextViewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6EC4F81A3661CD0000ADED /* TextViewViewController.m */; };
+		4A6EC4FF1A3674D90000ADED /* SearchableSelectableTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6EC4FE1A3674D90000ADED /* SearchableSelectableTableViewController.m */; };
 		BA173CBABCA1E34BEF426CD9 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8BC6704907BB46C45BDEDC4 /* libPods.a */; };
 		C22043183BE4798D1E875D69 /* libPods-Developer meeting systemTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D4D912310CBC0F7D4B6168F /* libPods-Developer meeting systemTests.a */; };
 /* End PBXBuildFile section */
@@ -63,12 +67,6 @@
 		4A207A511A32111C00C7D8F0 /* MeetingDetailsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetingDetailsTableViewController.m; sourceTree = "<group>"; };
 		4A33DCDE1A35E20A0032D553 /* Invite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Invite.h; sourceTree = "<group>"; };
 		4A33DCDF1A35E20A0032D553 /* Invite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Invite.m; sourceTree = "<group>"; };
-		4A33DCE41A35E20A0032D553 /* Meeting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Meeting.h; sourceTree = "<group>"; };
-		4A33DCE51A35E20A0032D553 /* Meeting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Meeting.m; sourceTree = "<group>"; };
-		4A33DCE71A35E29B0032D553 /* MeetingRoom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetingRoom.h; sourceTree = "<group>"; };
-		4A33DCE81A35E29B0032D553 /* MeetingRoom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetingRoom.m; sourceTree = "<group>"; };
-		4A33DCEA1A35E2F50032D553 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
-		4A33DCEB1A35E2F50032D553 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		4A33DCED1A35E32D0032D553 /* User+DMS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "User+DMS.h"; sourceTree = "<group>"; };
 		4A33DCEE1A35E32D0032D553 /* User+DMS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "User+DMS.m"; sourceTree = "<group>"; };
 		4A33DCF01A35E54E0032D553 /* Invite+DMS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Invite+DMS.h"; sourceTree = "<group>"; };
@@ -114,6 +112,20 @@
 		4A6E85601A2FEFA400FBF70D /* TimeRowHeaderBackground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeRowHeaderBackground.h; sourceTree = "<group>"; };
 		4A6E85611A2FEFA400FBF70D /* TimeRowHeaderBackground.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeRowHeaderBackground.m; sourceTree = "<group>"; };
 		4A6E85721A2FF56F00FBF70D /* DMS-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DMS-Prefix.pch"; sourceTree = "<group>"; };
+		4A6EC4E51A3611760000ADED /* MeetingRoom+DMS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MeetingRoom+DMS.h"; sourceTree = "<group>"; };
+		4A6EC4E61A3611760000ADED /* MeetingRoom+DMS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MeetingRoom+DMS.m"; sourceTree = "<group>"; };
+		4A6EC4E81A3612870000ADED /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		4A6EC4E91A3612870000ADED /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		4A6EC4EB1A3612880000ADED /* MeetingRoom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetingRoom.h; sourceTree = "<group>"; };
+		4A6EC4EC1A3612880000ADED /* MeetingRoom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetingRoom.m; sourceTree = "<group>"; };
+		4A6EC4F11A36568E0000ADED /* SelectableListTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectableListTableViewController.h; sourceTree = "<group>"; };
+		4A6EC4F21A36568E0000ADED /* SelectableListTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelectableListTableViewController.m; sourceTree = "<group>"; };
+		4A6EC4F41A3660CE0000ADED /* Meeting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Meeting.h; sourceTree = "<group>"; };
+		4A6EC4F51A3660CE0000ADED /* Meeting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Meeting.m; sourceTree = "<group>"; };
+		4A6EC4F71A3661CD0000ADED /* TextViewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextViewViewController.h; sourceTree = "<group>"; };
+		4A6EC4F81A3661CD0000ADED /* TextViewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextViewViewController.m; sourceTree = "<group>"; };
+		4A6EC4FD1A3674D90000ADED /* SearchableSelectableTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchableSelectableTableViewController.h; sourceTree = "<group>"; };
+		4A6EC4FE1A3674D90000ADED /* SearchableSelectableTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchableSelectableTableViewController.m; sourceTree = "<group>"; };
 		88598EBC11613AA23BB683C0 /* Pods-Developer meeting systemTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Developer meeting systemTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Developer meeting systemTests/Pods-Developer meeting systemTests.release.xcconfig"; sourceTree = "<group>"; };
 		9D4D912310CBC0F7D4B6168F /* libPods-Developer meeting systemTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Developer meeting systemTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B51ED1373F60EC48DD5D31E0 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
@@ -153,12 +165,12 @@
 		4A207A361A31FD7200C7D8F0 /* Managed objects */ = {
 			isa = PBXGroup;
 			children = (
-				4A33DCEA1A35E2F50032D553 /* User.h */,
-				4A33DCEB1A35E2F50032D553 /* User.m */,
-				4A33DCE71A35E29B0032D553 /* MeetingRoom.h */,
-				4A33DCE81A35E29B0032D553 /* MeetingRoom.m */,
-				4A33DCE41A35E20A0032D553 /* Meeting.h */,
-				4A33DCE51A35E20A0032D553 /* Meeting.m */,
+				4A6EC4F41A3660CE0000ADED /* Meeting.h */,
+				4A6EC4F51A3660CE0000ADED /* Meeting.m */,
+				4A6EC4EB1A3612880000ADED /* MeetingRoom.h */,
+				4A6EC4EC1A3612880000ADED /* MeetingRoom.m */,
+				4A6EC4E81A3612870000ADED /* User.h */,
+				4A6EC4E91A3612870000ADED /* User.m */,
 				4A33DCDE1A35E20A0032D553 /* Invite.h */,
 				4A33DCDF1A35E20A0032D553 /* Invite.m */,
 			);
@@ -170,6 +182,8 @@
 			children = (
 				4A207A411A31FDB100C7D8F0 /* Meeting+DMS.h */,
 				4A207A421A31FDB100C7D8F0 /* Meeting+DMS.m */,
+				4A6EC4E51A3611760000ADED /* MeetingRoom+DMS.h */,
+				4A6EC4E61A3611760000ADED /* MeetingRoom+DMS.m */,
 				4A33DCED1A35E32D0032D553 /* User+DMS.h */,
 				4A33DCEE1A35E32D0032D553 /* User+DMS.m */,
 				4A33DCF01A35E54E0032D553 /* Invite+DMS.h */,
@@ -264,6 +278,12 @@
 				4A6E85481A2FEC2D00FBF70D /* CalendarCollectionViewController.m */,
 				4A207A501A32111C00C7D8F0 /* MeetingDetailsTableViewController.h */,
 				4A207A511A32111C00C7D8F0 /* MeetingDetailsTableViewController.m */,
+				4A6EC4F11A36568E0000ADED /* SelectableListTableViewController.h */,
+				4A6EC4F21A36568E0000ADED /* SelectableListTableViewController.m */,
+				4A6EC4FD1A3674D90000ADED /* SearchableSelectableTableViewController.h */,
+				4A6EC4FE1A3674D90000ADED /* SearchableSelectableTableViewController.m */,
+				4A6EC4F71A3661CD0000ADED /* TextViewViewController.h */,
+				4A6EC4F81A3661CD0000ADED /* TextViewViewController.m */,
 				4A6E85391A2FDC3200FBF70D /* InvitesMasterTableViewController.h */,
 				4A6E853A1A2FDC3200FBF70D /* InvitesMasterTableViewController.m */,
 			);
@@ -517,6 +537,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A6EC4F91A3661CD0000ADED /* TextViewViewController.m in Sources */,
+				4A6EC4EA1A3612870000ADED /* User.m in Sources */,
 				4A3862CD1A35B2FA00513D13 /* YesNoTableViewCell.m in Sources */,
 				4A207A431A31FDB100C7D8F0 /* Meeting+DMS.m in Sources */,
 				4A6E85151A2FDBBC00FBF70D /* AppDelegate.m in Sources */,
@@ -525,23 +547,25 @@
 				4A6E853B1A2FDC3200FBF70D /* InvitesMasterTableViewController.m in Sources */,
 				4A6E85651A2FEFA400FBF70D /* DayColumnHeader.m in Sources */,
 				4A33DCE01A35E20A0032D553 /* Invite.m in Sources */,
+				4A6EC4E71A3611760000ADED /* MeetingRoom+DMS.m in Sources */,
 				4A6E85681A2FEFA400FBF70D /* TimeRowHeader.m in Sources */,
-				4A33DCEC1A35E2F50032D553 /* User.m in Sources */,
 				4A207A521A32111C00C7D8F0 /* MeetingDetailsTableViewController.m in Sources */,
 				4A6E85631A2FEFA400FBF70D /* CurrentTimeGridline.m in Sources */,
 				4A6E854D1A2FEF6700FBF70D /* WebServiceClient.m in Sources */,
 				4A6E85491A2FEC2D00FBF70D /* CalendarCollectionViewController.m in Sources */,
 				4A207A491A31FF8100C7D8F0 /* ContextManager.m in Sources */,
 				4A33DCF21A35E54E0032D553 /* Invite+DMS.m in Sources */,
-				4A33DCE61A35E20A0032D553 /* Meeting.m in Sources */,
+				4A6EC4F61A3660CE0000ADED /* Meeting.m in Sources */,
 				4A6E85121A2FDBBC00FBF70D /* main.m in Sources */,
+				4A6EC4ED1A3612880000ADED /* MeetingRoom.m in Sources */,
+				4A6EC4FF1A3674D90000ADED /* SearchableSelectableTableViewController.m in Sources */,
 				4A6E85621A2FEFA400FBF70D /* MeetingCell.m in Sources */,
 				4A6E85671A2FEFA400FBF70D /* Gridline.m in Sources */,
 				4A207A351A31FBC900C7D8F0 /* Model.xcdatamodeld in Sources */,
 				4A6E85661A2FEFA400FBF70D /* DayColumnHeaderBackground.m in Sources */,
 				4A3862CA1A35AAC500513D13 /* TextFieldTableViewCell.m in Sources */,
+				4A6EC4F31A36568E0000ADED /* SelectableListTableViewController.m in Sources */,
 				4A6E85691A2FEFA400FBF70D /* TimeRowHeaderBackground.m in Sources */,
-				4A33DCE91A35E29B0032D553 /* MeetingRoom.m in Sources */,
 				4A6E85461A2FDEFA00FBF70D /* LoginViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

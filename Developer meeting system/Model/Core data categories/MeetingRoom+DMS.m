@@ -15,8 +15,8 @@
     NSError *error;
     
     [MeetingRoom sqk_insertOrUpdate:meetingRooms
-              uniqueModelKey:@"meetingRoomID"
-             uniqueRemoteKey:@"Id"
+              uniqueModelKey:@"name"
+             uniqueRemoteKey:@"Name"
          propertySetterBlock:^(NSDictionary *dictionary, MeetingRoom *managedObject) {
              managedObject.meetingRoomID = dictionary[@"Id"];
              managedObject.name = dictionary[@"Name"];

@@ -11,7 +11,8 @@
 typedef NS_ENUM(NSUInteger, RequestType) {
     RequestTypeGET = 0,
     RequestTypePOST,
-    RequestTypePUT
+    RequestTypePUT,
+    RequestTypeDELETE
 };
 
 @interface WebServiceClient : NSObject
@@ -50,5 +51,29 @@ typedef NS_ENUM(NSUInteger, RequestType) {
 - (void)GETAllMeetingsRoomsSuccess:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock;
 - (void)GETAllUserDetailsSuccess:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock;
 - (void)GETAllRolesSuccess:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock;
+
+/**
+ *  POST Methods. POST requests inserts a new object on the API.
+ *
+ *  @param successBlock This is the block that will be called when the API endpoint returns a 200.
+ *  @param failureBlock This is the block that will be called when the API endpoint returns anything other than a 200.
+ */
+- (void)POSTMeeting:(NSDictionary *)meetingJSON success:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock;
+
+/**
+ *  PUT Methods. PUT requests updates objects currently on the API.
+ *
+ *  @param successBlock This is the block that will be called when the API endpoint returns a 200.
+ *  @param failureBlock This is the block that will be called when the API endpoint returns anything other than a 200.
+ */
+- (void)PUTMeeting:(NSDictionary *)meetingJSON success:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock;
+
+/**
+ *  DELETE Methods. DELETE requests deletes the object from the API.
+ *
+ *  @param successBlock This is the block that will be called when the API endpoint returns a 200.
+ *  @param failureBlock This is the block that will be called when the API endpoint returns anything other than a 200.
+ */
+- (void)DELETEMeetingWithID:(NSString *)meetingID success:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock;
 
 @end

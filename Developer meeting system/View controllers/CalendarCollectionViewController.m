@@ -34,6 +34,9 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
 @property (nonatomic, strong) NSIndexPath *selectedIndexPath;
 @property (nonatomic, strong) Meeting *selectedMeeting;
 
+
+- (IBAction)addNewMeetingButtonWasTapped:(id)sender;
+
 @end
 
 @implementation CalendarCollectionViewController
@@ -73,47 +76,51 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
         [self performSegueWithIdentifier:@"showLoginNoAnimation" sender:self];
         return;
     }
-    else if(self.fetchedResultsController.sections.count == 0)
-    {
-        NSManagedObjectContext *context = [ContextManager newPrivateContext];
+    
+    NSManagedObjectContext *context = [ContextManager newPrivateContext];
+    
+    [[WebServiceClient sharedInstance] GETAllMeetingsRoomsSuccess:^(NSDictionary *JSON) {
+        NSArray *array = (NSArray *)JSON;
+        [MeetingRoom importMeetingRooms:array intoContext:context];
         
-        [[WebServiceClient sharedInstance] GETAllMeetingsRoomsSuccess:^(NSDictionary *JSON) {
+        [[WebServiceClient sharedInstance] GETAllUserDetailsSuccess:^(NSDictionary *JSON) {
             NSArray *array = (NSArray *)JSON;
-            [MeetingRoom importMeetingRooms:array intoContext:context];
+            [User importUsers:array intoContext:context];
             
-            [[WebServiceClient sharedInstance] GETAllUserDetailsSuccess:^(NSDictionary *JSON) {
+            [[WebServiceClient sharedInstance] GETAllMeetingsSuccess:^(NSDictionary *JSON) {
                 NSArray *array = (NSArray *)JSON;
-                [User importUsers:array intoContext:context];
+                [Meeting importMeetings:array intoContext:context];
+                [Meeting deleteInvalidMeetingsInContext:context];
                 
-                [[WebServiceClient sharedInstance] GETAllMeetingsSuccess:^(NSDictionary *JSON) {
-                    NSArray *array = (NSArray *)JSON;
-                    [Meeting importMeetings:array intoContext:context];
-                    
-                    NSError *error;
-                    [context save:&error];
-                    
-                    if(error)
-                    {
-                        NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
-                    }
+                NSError *error;
+                [context save:&error];
+                
+                if(error)
+                {
+                    NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
                 }
-                                                                 failure:^(NSError *error) {
-                                                                     NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
-                                                                 }];
             }
-                                                                failure:^(NSError *error) {
-                                                                    NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
-                                                                }];
+                                                             failure:^(NSError *error) {
+                                                                 NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
+                                                             }];
         }
-                                                              failure:^(NSError *error) {
-                                                                  NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
-                                                              }];
+                                                            failure:^(NSError *error) {
+                                                                NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
+                                                            }];
     }
+                                                          failure:^(NSError *error) {
+                                                              NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
+                                                          }];
     
     self.view.alpha = 1.0;
     [self.collectionViewCalendarLayout scrollCollectionViewToClosetSectionToCurrentTimeAnimated:NO];
     [self.collectionView deselectItemAtIndexPath:self.selectedIndexPath animated:YES];
     self.selectedIndexPath = nil;
+}
+
+- (IBAction)addNewMeetingButtonWasTapped:(id)sender
+{
+    [self performSegueWithIdentifier:@"showMeetingDetails" sender:self];
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
@@ -239,6 +246,8 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
         MeetingDetailsTableViewController *meetingDetailsTableViewController = (MeetingDetailsTableViewController *)[navigationController.viewControllers firstObject];
         meetingDetailsTableViewController.delegate = self;
         meetingDetailsTableViewController.meeting = self.selectedMeeting;
+        
+        self.selectedMeeting = nil;
     }
 }
 

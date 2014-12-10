@@ -12,6 +12,7 @@
 
 + (BOOL)importUsers:(NSArray *)users intoContext:(NSManagedObjectContext *)context;
 + (User *)importUserWithUsername:(NSString *)username intoContext:(NSManagedObjectContext *)context;
++ (User *)userWithUsername:(NSString *)username inContext:(NSManagedObjectContext *)context;
 + (NSSet *)usernamesForUsers:(NSSet *)users;
 
 @end

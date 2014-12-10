@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6254" systemVersion="14C68m" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6254" systemVersion="14C78c" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Invite" representedClassName="Invite" syncable="YES">
         <attribute name="inviteID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="status" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
@@ -14,6 +14,7 @@
         <attribute name="notes" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="startDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="subject" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="host" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="meetingsHosting" inverseEntity="User" syncable="YES"/>
         <relationship name="invites" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Invite" inverseName="meeting" inverseEntity="Invite" syncable="YES"/>
         <relationship name="meetingRoom" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MeetingRoom" inverseName="meetings" inverseEntity="MeetingRoom" syncable="YES"/>
     </entity>
@@ -33,11 +34,12 @@
         <attribute name="role" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="invites" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Invite" inverseName="user" inverseEntity="Invite" syncable="YES"/>
+        <relationship name="meetingsHosting" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Meeting" inverseName="host" inverseEntity="Meeting" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Invite" positionX="-263" positionY="-14" width="128" height="103"/>
-        <element name="Meeting" positionX="-452" positionY="-59" width="128" height="178"/>
-        <element name="MeetingRoom" positionX="-657" positionY="-14" width="128" height="133"/>
-        <element name="User" positionX="-74" positionY="-44" width="128" height="148"/>
+        <element name="Invite" positionX="-828" positionY="-126" width="128" height="103"/>
+        <element name="Meeting" positionX="-452" positionY="-59" width="128" height="193"/>
+        <element name="MeetingRoom" positionX="-684" positionY="144" width="128" height="133"/>
+        <element name="User" positionX="-630" positionY="-298" width="128" height="163"/>
     </elements>
 </model>

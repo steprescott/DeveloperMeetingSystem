@@ -12,7 +12,10 @@
 @interface Meeting (DMS)
 
 + (BOOL)importMeetings:(NSArray *)meetings intoContext:(NSManagedObjectContext *)context;
++ (void)deleteInvalidMeetingsInContext:(NSManagedObjectContext *)context;
 
 - (NSSet *)invitesWithStatus:(InviteStatus)inviteStauts;
 - (NSSet *)usersInMeeting;
+- (NSDictionary *)JSONRepresentation;
+
 @end

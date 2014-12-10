@@ -152,6 +152,63 @@ static NSString *rolesEndPoint = @"role";
                        }];
 }
 
+- (void)POSTMeeting:(NSDictionary *)meetingJSON success:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock
+{
+    [self performRequestOfType:RequestTypePOST
+                    toEndPoint:meetingsEndPoint
+                withParameters:meetingJSON
+                       success:^(NSDictionary *JSON) {
+                           if(successBlock)
+                           {
+                               successBlock(JSON);
+                           }
+                       }
+                       failure:^(NSError *error) {
+                           if(failureBlock)
+                           {
+                               failureBlock(error);
+                           }
+                       }];
+}
+
+- (void)PUTMeeting:(NSDictionary *)meetingJSON success:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock
+{
+    [self performRequestOfType:RequestTypePUT
+                    toEndPoint:meetingsEndPoint
+                withParameters:meetingJSON
+                       success:^(NSDictionary *JSON) {
+                           if(successBlock)
+                           {
+                               successBlock(JSON);
+                           }
+                       }
+                       failure:^(NSError *error) {
+                           if(failureBlock)
+                           {
+                               failureBlock(error);
+                           }
+                       }];
+}
+
+- (void)DELETEMeetingWithID:(NSString *)meetingID success:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock
+{
+    [self performRequestOfType:RequestTypeDELETE
+                    toEndPoint:meetingsEndPoint
+                withParameters:@{@"meetingId" : meetingID}
+                       success:^(NSDictionary *JSON) {
+                           if(successBlock)
+                           {
+                               successBlock(JSON);
+                           }
+                       }
+                       failure:^(NSError *error) {
+                           if(failureBlock)
+                           {
+                               failureBlock(error);
+                           }
+                       }];
+}
+
 - (void)performRequestOfType:(RequestType)requestType toEndPoint:(NSString *)endPoint withParameters:(NSDictionary *)parameters success:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock
 {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
@@ -199,6 +256,22 @@ static NSString *rolesEndPoint = @"role";
     else if (requestType == RequestTypePUT)
     {
         [manager PUT:urlString
+          parameters:parameters
+             success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {
+                 if(successBlock)
+                 {
+                     successBlock(responseObject);
+                 }
+             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                 if(failureBlock)
+                 {
+                     failureBlock(error);
+                 }
+             }];
+    }
+    else if (requestType == RequestTypeDELETE)
+    {
+        [manager DELETE:urlString
           parameters:parameters
              success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {
                  if(successBlock)

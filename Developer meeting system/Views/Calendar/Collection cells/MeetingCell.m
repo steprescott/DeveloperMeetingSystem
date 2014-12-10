@@ -101,8 +101,8 @@
 - (void)setMeeting:(Meeting *)meeting
 {
     _meeting = meeting;
-    self.title.attributedText = [[NSAttributedString alloc] initWithString:meeting.subject attributes:[self titleAttributesHighlighted:self.selected]];
-//    self.location.attributedText = [[NSAttributedString alloc] initWithString:meeting.meetingRoom.name attributes:[self subtitleAttributesHighlighted:self.selected]];
+    self.title.attributedText = [[NSAttributedString alloc] initWithString:meeting.subject ? meeting.subject : @"Unknown" attributes:[self titleAttributesHighlighted:self.selected]];
+    self.location.attributedText = [[NSAttributedString alloc] initWithString:meeting.meetingRoom.name ? meeting.meetingRoom.name : @"Unknown" attributes:[self subtitleAttributesHighlighted:self.selected]];
 }
 
 - (void)updateColors

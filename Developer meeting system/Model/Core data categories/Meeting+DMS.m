@@ -27,7 +27,7 @@
     [objects makeObjectsPerformSelector:@selector(setHasBeenUpdated:) withObject:@NO];
     
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSZ"];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
     
     [Meeting sqk_insertOrUpdate:meetings
                  uniqueModelKey:@"meetingID"
@@ -38,7 +38,13 @@
                 managedObject.startDate = [dateFormatter dateFromString:dictionary[@"StartDateTime"]];
                 managedObject.endDate = [dateFormatter dateFromString:dictionary[@"EndDateTime"]];
                 managedObject.hasBeenUpdated = @YES;
+                
                 managedObject.meetingRoom = [MeetingRoom meetingRoomWithName:dictionary[@"MeetingRoom"][@"Name"] inContext:context];
+                
+                managedObject.host = [User userWithUsername:dictionary[@"HostUser"][@"Username"] inContext:context];
+                managedObject.host.firstName = dictionary[@"HostUser"][@"Firstname"];
+                managedObject.host.lastName = dictionary[@"HostUser"][@"Surname"];
+                managedObject.host.contactNumber = dictionary[@"HostUser"][@"ContactNumber"];
                 
                 NSArray *invitedUsers = dictionary[@"UsersInvited"];
                 NSArray *acceptedUsers = dictionary[@"UsersAccepted"];
@@ -89,6 +95,21 @@
     return YES;
 }
 
++ (void)deleteInvalidMeetingsInContext:(NSManagedObjectContext *)context
+{
+    NSFetchRequest *request = [Meeting sqk_fetchRequest];
+    request.predicate = [NSPredicate predicateWithFormat:@"hasBeenUpdated == NO"];
+    
+    NSError *error;
+    NSArray *objects = [context executeFetchRequest:request error:&error];
+    [objects makeObjectsPerformSelector:@selector(sqk_deleteObject)];
+    
+    if(error)
+    {
+        NSLog(@"Error when deleting invalid meetings. %s %@", __PRETTY_FUNCTION__, error.localizedDescription);
+    }
+}
+
 - (NSSet *)invitesWithStatus:(InviteStatus)inviteStauts
 {
     return [self.invites filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"status = %i", inviteStauts]];
@@ -103,6 +124,57 @@
     }];
     
     return set;
+}
+
+- (NSSet *)usersInMeetingWithInvitesWithStatus:(InviteStatus)inviteStauts
+{
+    NSSet *filteredInvites = [self.invites filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"status = %i", inviteStauts]];
+    NSMutableSet *set = [NSMutableSet set];
+    
+    [filteredInvites enumerateObjectsUsingBlock:^(Invite *invite, BOOL *stop) {
+        [set addObject:invite.user];
+    }];
+    
+    return set;
+}
+
+- (NSSet *)usernamesForUsers:(NSSet *)users
+{
+    NSMutableSet *set = [NSMutableSet set];
+    
+    [users enumerateObjectsUsingBlock:^(User *user, BOOL *stop) {
+        [set addObject:user.username];
+    }];
+    
+    return set;
+}
+
+- (NSDictionary *)JSONRepresentation
+{
+    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
+    
+    return @{@"Id": self.meetingID ? self.meetingID : @"",
+             @"Subject": self.subject ? self.subject : @"",
+             @"StartDateTime": [dateFormatter stringFromDate:self.startDate],
+             @"EndDateTime": [dateFormatter stringFromDate:self.endDate],
+             @"IsPublic": @([self.isPublic boolValue]),
+             @"MeetingNotes": self.notes ? self.notes : @"",
+             @"HostUser": @{
+                     @"Username": @"",
+                     @"Firstname": @"",
+                     @"Surname": @"",
+                     @"ContactNumber": @""
+                     },
+             @"MeetingRoom": @{
+                     @"Name": self.meetingRoom.name ? self.meetingRoom.name : @"",
+                     @"Details": self.meetingRoom.details ? self.meetingRoom.details : @"",
+                     @"ContainsProjector": @([self.meetingRoom.containsProjector boolValue])
+                     },
+             @"UsersInvited": [[self usernamesForUsers:[self usersInMeetingWithInvitesWithStatus:InviteStatusInvited]] allObjects],
+             @"UsersAccepted": [[self usernamesForUsers:[self usersInMeetingWithInvitesWithStatus:InviteStatusAccepted]] allObjects],
+             @"UsersTentative": [[self usernamesForUsers:[self usersInMeetingWithInvitesWithStatus:InviteStatusTentative]] allObjects],
+             @"UsersDeclined": [[self usernamesForUsers:[self usersInMeetingWithInvitesWithStatus:InviteStatusDeclined]] allObjects]};
 }
 
 @end

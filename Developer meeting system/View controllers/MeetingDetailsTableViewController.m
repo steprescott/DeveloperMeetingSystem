@@ -13,6 +13,7 @@
 #import "SelectableListTableViewController.h"
 #import "SearchableSelectableTableViewController.h"
 #import "TextViewViewController.h"
+#import "WebServiceClient.h"
 
 #import "ContextManager.h"
 #import "Meeting+DMS.h"
@@ -59,6 +60,11 @@ static NSString *basicCellWithIdentifier = @"basicCell";
 @property (nonatomic, strong) NSIndexPath *isPublicIndexPath;
 @property (nonatomic, strong) NSIndexPath *notesIndexPath;
 
+@property (nonatomic, strong) NSString *meetingSubject;
+@property (nonatomic, strong) NSDate *meetingStartDate;
+@property (nonatomic, strong) NSDate *meetingEndDate;
+
+- (IBAction)cancelButtonWasTapped:(id)sender;
 - (IBAction)doneButtonWasTapped:(id)sender;
 
 @end
@@ -86,11 +92,25 @@ static NSString *basicCellWithIdentifier = @"basicCell";
     self.notesIndexPath = [NSIndexPath indexPathForRow:TableViewSectionMeetingDetailsRowNotes
                                                inSection:TableViewSectionMeetingDetails];
     
+    self.meetingSubject = self.meeting.subject;
+    self.meetingStartDate = self.meeting.startDate ? self.meeting.startDate : [NSDate new];
+    self.meetingEndDate = self.meeting.endDate ? self.meeting.endDate : [NSDate dateWithTimeIntervalSinceNow:(60 * 60)];
+    
     self.dateCellsController = [[DateCellsController alloc] init];
     [self.dateCellsController attachToTableView:self.tableView
                                    withDelegate:self
-                                    withMapping:[@{self.startDateIndexPath : self.meeting.startDate,
-                                                   self.endDateIndexPath : self.meeting.endDate} mutableCopy]];
+                                    withMapping:[@{self.startDateIndexPath : self.meetingStartDate,
+                                                   self.endDateIndexPath : self.meetingEndDate} mutableCopy]];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    TextFieldTableViewCell *subjectCell = (TextFieldTableViewCell *)[self.dateCellsController cellForIndexPath:self.subjectIndexPath ignoringPickerCells:YES];
+    YesNoTableViewCell *isPublicCell = (YesNoTableViewCell *)[self.dateCellsController cellForIndexPath:self.isPublicIndexPath ignoringPickerCells:YES];
+    self.meetingSubject = subjectCell.textField.text;
+    self.meeting.isPublic = @([isPublicCell isYes]);
 }
 
 - (void)setMeeting:(Meeting *)meeting
@@ -99,15 +119,29 @@ static NSString *basicCellWithIdentifier = @"basicCell";
     self.title = meeting.subject;
 }
 
+- (IBAction)cancelButtonWasTapped:(id)sender
+{
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    
+    if([self.delegate respondsToSelector:@selector(meetingDetailsFormDissmissed)])
+    {
+        [self.delegate meetingDetailsFormDissmissed];
+    }
+}
+
 - (IBAction)doneButtonWasTapped:(id)sender
 {
     [self.dateCellsController hidePicker];
     
-    TextFieldTableViewCell *subjectCell = (TextFieldTableViewCell *)[self.dateCellsController cellForIndexPath:self.subjectIndexPath ignoringPickerCells:YES];
-    YesNoTableViewCell *isPublicCell = (YesNoTableViewCell *)[self.dateCellsController cellForIndexPath:self.isPublicIndexPath ignoringPickerCells:YES];
+    if(!self.meeting)
+    {
+        self.meeting = [Meeting sqk_insertInContext:[ContextManager mainContext]];
+    }
     
-    self.meeting.subject = subjectCell.textField.text;
-    self.meeting.isPublic = @([isPublicCell isYes]);
+    self.meeting.subject = self.meetingSubject;
+    self.meeting.isPublic = @NO; //CHANGE ME
+    self.meeting.startDate = self.meetingStartDate;
+    self.meeting.endDate = self.meetingEndDate;
     
     NSError *error;
     [self.meeting.managedObjectContext save:&error];
@@ -117,11 +151,36 @@ static NSString *basicCellWithIdentifier = @"basicCell";
         NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
     }
     
-    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-    
-    if([self.delegate respondsToSelector:@selector(meetingDetailsFormDissmissed)])
+    if(!self.meeting.meetingID)
     {
-        [self.delegate meetingDetailsFormDissmissed];
+        [[WebServiceClient sharedInstance] POSTMeeting:[self.meeting JSONRepresentation]
+                                               success:^(NSDictionary *JSON) {
+                                                   [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                                                   
+                                                   if([self.delegate respondsToSelector:@selector(meetingDetailsFormDissmissed)])
+                                                   {
+                                                       [self.delegate meetingDetailsFormDissmissed];
+                                                   }
+                                               }
+                                               failure:^(NSError *error) {
+                                                   NSLog(@"%s Error when exicuting POST request to meeting %@", __PRETTY_FUNCTION__, error.localizedDescription);
+                                               }];
+    }
+    else
+    {
+        [[WebServiceClient sharedInstance] PUTMeeting:[self.meeting JSONRepresentation]
+                                              success:^(NSDictionary *JSON) {
+                                                  [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                                                  
+                                                  if([self.delegate respondsToSelector:@selector(meetingDetailsFormDissmissed)])
+                                                  {
+                                                      [self.delegate meetingDetailsFormDissmissed];
+                                                  }
+                                              }
+                                              failure:^(NSError *error) {
+                                                  NSLog(@"%s Error when exicuting PUT request to meeting %@", __PRETTY_FUNCTION__, error.localizedDescription);
+                                              }];
+
     }
 }
 
@@ -235,7 +294,7 @@ static NSString *basicCellWithIdentifier = @"basicCell";
                 {
                     TextFieldTableViewCell *textFieldCell = (TextFieldTableViewCell *)[tableView dequeueReusableCellWithIdentifier:textFieldCellWithIdentifier forIndexPath:indexPath];
                     textFieldCell.label.text = @"Subject";
-                    textFieldCell.textField.text = self.meeting.subject;
+                    textFieldCell.textField.text = self.meetingSubject;
                     
                     cell = textFieldCell;
                     break;
@@ -468,6 +527,24 @@ static NSString *basicCellWithIdentifier = @"basicCell";
                     };
                     
                     [self.navigationController showViewController:searchableSelectableTableViewController sender:self];
+                    break;
+                }
+                
+                case TableViewSectionActionsRowDeleteMeeting:
+                {
+                    [[WebServiceClient sharedInstance] DELETEMeetingWithID:self.meeting.meetingID
+                                                          success:^(NSDictionary *JSON) {
+                                                              [self.meeting sqk_deleteObject];
+                                                              [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                                                              
+                                                              if([self.delegate respondsToSelector:@selector(meetingDetailsFormDissmissed)])
+                                                              {
+                                                                  [self.delegate meetingDetailsFormDissmissed];
+                                                              }
+                                                          }
+                                                          failure:^(NSError *error) {
+                                                              NSLog(@"%s Error when exicuting DELETE request to meeting %@", __PRETTY_FUNCTION__, error.localizedDescription);
+                                                          }];
                     break;
                 }
             }

@@ -2,7 +2,7 @@
 //  Invite.m
 //  Developer meeting system
 //
-//  Created by Ste Prescott on 08/12/2014.
+//  Created by Ste Prescott on 09/12/2014.
 //  Copyright (c) 2014 Ste Prescott. All rights reserved.
 //
 
@@ -15,7 +15,7 @@
 
 @dynamic inviteID;
 @dynamic status;
-@dynamic user;
 @dynamic meeting;
+@dynamic user;
 
 @end

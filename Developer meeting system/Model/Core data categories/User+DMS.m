@@ -55,6 +55,22 @@
     return user;
 }
 
++ (User *)userWithUsername:(NSString *)username inContext:(NSManagedObjectContext *)context
+{
+    NSFetchRequest *request = [User sqk_fetchRequest];
+    request.predicate = [NSPredicate predicateWithFormat:@"username == %@", username];
+    
+    NSError *error;
+    NSArray *objects = [context executeFetchRequest:request error:&error];
+    
+    if(error)
+    {
+        NSLog(@"Error when importing. %s %@", __PRETTY_FUNCTION__, error.localizedDescription);
+    }
+    
+    return [objects firstObject];
+}
+
 + (NSSet *)usernamesForUsers:(NSSet *)users
 {
     NSMutableSet *set = [NSMutableSet set];

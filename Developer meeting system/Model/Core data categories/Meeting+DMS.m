@@ -26,6 +26,17 @@
     
     [objects makeObjectsPerformSelector:@selector(setHasBeenUpdated:) withObject:@NO];
     
+    request = [Invite sqk_fetchRequest];
+    objects = [context executeFetchRequest:request error:&error];
+    
+    if(error)
+    {
+        NSLog(@"Error when executing fetch request. %s %@", __PRETTY_FUNCTION__, error.localizedDescription);
+        return NO;
+    }
+    
+    [objects makeObjectsPerformSelector:@selector(setHasBeenUpdated:) withObject:@NO];
+    
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
     
@@ -123,6 +134,8 @@
         [set addObject:invite.user];
     }];
     
+    [set addObject:self.host];
+    
     return set;
 }
 
@@ -154,21 +167,21 @@
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
     
-    return @{@"Id": self.meetingID ? self.meetingID : @"",
-             @"Subject": self.subject ? self.subject : @"",
+    return @{@"Id": self.meetingID ? self.meetingID : @"Unknown",
+             @"Subject": self.subject ? self.subject : @"Unknown",
              @"StartDateTime": [dateFormatter stringFromDate:self.startDate],
              @"EndDateTime": [dateFormatter stringFromDate:self.endDate],
              @"IsPublic": @([self.isPublic boolValue]),
-             @"MeetingNotes": self.notes ? self.notes : @"",
+             @"MeetingNotes": self.notes ? self.notes : @"Unknown",
              @"HostUser": @{
-                     @"Username": @"",
-                     @"Firstname": @"",
-                     @"Surname": @"",
-                     @"ContactNumber": @""
+                     @"Username": self.host.username ? self.host.username : @"Unknown",
+                     @"Firstname": self.host.firstName ? self.host.firstName : @"Unknown",
+                     @"Surname": self.host.lastName ? self.host.lastName : @"Unknown",
+                     @"ContactNumber": self.host.contactNumber ? self.host.contactNumber : @"Unknown"
                      },
              @"MeetingRoom": @{
-                     @"Name": self.meetingRoom.name ? self.meetingRoom.name : @"",
-                     @"Details": self.meetingRoom.details ? self.meetingRoom.details : @"",
+                     @"Name": self.meetingRoom.name ? self.meetingRoom.name : @"Unknown",
+                     @"Details": self.meetingRoom.details ? self.meetingRoom.details : @"Unknown",
                      @"ContainsProjector": @([self.meetingRoom.containsProjector boolValue])
                      },
              @"UsersInvited": [[self usernamesForUsers:[self usersInMeetingWithInvitesWithStatus:InviteStatusInvited]] allObjects],

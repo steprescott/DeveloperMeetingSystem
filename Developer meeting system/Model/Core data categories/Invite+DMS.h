@@ -17,5 +17,6 @@ typedef NS_ENUM(NSUInteger, InviteStatus) {
 @interface Invite (DMS)
 
 + (void)createInviteForMeeting:(Meeting *)meeting withUser:(User *)user forStatus:(InviteStatus)inviteStauts intoContext:(NSManagedObjectContext *)context;
++ (void)deleteInvalidInvitesInContext:(NSManagedObjectContext *)context;
 
 @end

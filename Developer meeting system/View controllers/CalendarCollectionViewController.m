@@ -67,6 +67,12 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
     self.view.alpha = 0.0;
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.collectionView reloadData];
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
@@ -91,6 +97,7 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
                 NSArray *array = (NSArray *)JSON;
                 [Meeting importMeetings:array intoContext:context];
                 [Meeting deleteInvalidMeetingsInContext:context];
+                [Invite deleteInvalidInvitesInContext:context];
                 
                 NSError *error;
                 [context save:&error];
@@ -101,15 +108,15 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
                 }
             }
                                                              failure:^(NSError *error) {
-                                                                 NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
+                                                                 NSLog(@"%s Meeting room error %@", __PRETTY_FUNCTION__, error.localizedDescription);
                                                              }];
         }
                                                             failure:^(NSError *error) {
-                                                                NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
+                                                                NSLog(@"%s User error %@", __PRETTY_FUNCTION__, error.localizedDescription);
                                                             }];
     }
                                                           failure:^(NSError *error) {
-                                                              NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
+                                                              NSLog(@"%s Meetings error %@", __PRETTY_FUNCTION__, error.localizedDescription);
                                                           }];
     
     self.view.alpha = 1.0;
@@ -169,6 +176,7 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
     MeetingCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:EventCellReuseIdentifier forIndexPath:indexPath];
     Meeting *meeting = [self.fetchedResultsController objectAtIndexPath:indexPath];
     cell.meeting = meeting;
+    [cell updateColors];
     return cell;
 }
 

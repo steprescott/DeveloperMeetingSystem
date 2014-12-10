@@ -103,6 +103,7 @@
     _meeting = meeting;
     self.title.attributedText = [[NSAttributedString alloc] initWithString:meeting.subject ? meeting.subject : @"Unknown" attributes:[self titleAttributesHighlighted:self.selected]];
     self.location.attributedText = [[NSAttributedString alloc] initWithString:meeting.meetingRoom.name ? meeting.meetingRoom.name : @"Unknown" attributes:[self subtitleAttributesHighlighted:self.selected]];
+    [self updateColors];
 }
 
 - (void)updateColors
@@ -141,12 +142,26 @@
 
 - (UIColor *)backgroundColorHighlighted:(BOOL)selected
 {
-    return selected ? [UIColor colorWithHexString:@"35b1f1"] : [[UIColor colorWithHexString:@"35b1f1"] colorWithAlphaComponent:0.2];
+    if(self.meeting.isPublic)
+    {
+        return selected ? [UIColor colorWithHexString:@"35b1f1"] : [[UIColor colorWithHexString:@"35b1f1"] colorWithAlphaComponent:0.2];
+    }
+    else
+    {
+        return selected ? [UIColor colorWithHexString:@"fa9999"] : [[UIColor colorWithHexString:@"fccaca"] colorWithAlphaComponent:0.2];
+    }
 }
 
 - (UIColor *)textColorHighlighted:(BOOL)selected
 {
-    return selected ? [UIColor whiteColor] : [UIColor colorWithHexString:@"21729c"];
+    if(self.meeting.isPublic)
+    {
+        return selected ? [UIColor whiteColor] : [UIColor colorWithHexString:@"21729c"];
+    }
+    else
+    {
+        return selected ? [UIColor whiteColor] : [UIColor colorWithHexString:@"d40707"];
+    }
 }
 
 - (UIColor *)borderColor

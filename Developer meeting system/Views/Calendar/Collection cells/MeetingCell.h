@@ -16,4 +16,6 @@
 @property (nonatomic, strong) UILabel *title;
 @property (nonatomic, strong) UILabel *location;
 
+- (void)updateColors;
+
 @end

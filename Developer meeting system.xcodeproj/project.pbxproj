@@ -17,6 +17,7 @@
 		4A3862CD1A35B2FA00513D13 /* YesNoTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A3862CC1A35B2FA00513D13 /* YesNoTableViewCell.m */; };
 		4A3862D21A35C4C800513D13 /* MeetingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A3862D11A35C4C800513D13 /* MeetingTests.m */; };
 		4A3862D41A35CE1800513D13 /* Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A3862D31A35CE1800513D13 /* Test.m */; };
+		4A44A1AF1A38ABAB00B17A53 /* Invite.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A44A1AE1A38ABAB00B17A53 /* Invite.m */; };
 		4A6E85121A2FDBBC00FBF70D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6E85111A2FDBBC00FBF70D /* main.m */; };
 		4A6E85151A2FDBBC00FBF70D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6E85141A2FDBBC00FBF70D /* AppDelegate.m */; };
 		4A6E851E1A2FDBBC00FBF70D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A6E851C1A2FDBBC00FBF70D /* Main.storyboard */; };
@@ -41,7 +42,6 @@
 		4A6EC4FF1A3674D90000ADED /* SearchableSelectableTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6EC4FE1A3674D90000ADED /* SearchableSelectableTableViewController.m */; };
 		4A8AD81E1A3781EF009E18E7 /* Meeting.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A8AD81D1A3781EF009E18E7 /* Meeting.m */; };
 		4A8AD8211A3781F0009E18E7 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A8AD8201A3781F0009E18E7 /* User.m */; };
-		4A8AD8241A3781F0009E18E7 /* Invite.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A8AD8231A3781F0009E18E7 /* Invite.m */; };
 		BA173CBABCA1E34BEF426CD9 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8BC6704907BB46C45BDEDC4 /* libPods.a */; };
 		C22043183BE4798D1E875D69 /* libPods-Developer meeting systemTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D4D912310CBC0F7D4B6168F /* libPods-Developer meeting systemTests.a */; };
 /* End PBXBuildFile section */
@@ -75,6 +75,8 @@
 		4A3862CC1A35B2FA00513D13 /* YesNoTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YesNoTableViewCell.m; sourceTree = "<group>"; };
 		4A3862D11A35C4C800513D13 /* MeetingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetingTests.m; sourceTree = "<group>"; };
 		4A3862D31A35CE1800513D13 /* Test.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Test.m; sourceTree = "<group>"; };
+		4A44A1AD1A38ABAB00B17A53 /* Invite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Invite.h; sourceTree = "<group>"; };
+		4A44A1AE1A38ABAB00B17A53 /* Invite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Invite.m; sourceTree = "<group>"; };
 		4A6E850C1A2FDBBC00FBF70D /* Developer meeting system.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Developer meeting system.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A6E85101A2FDBBC00FBF70D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4A6E85111A2FDBBC00FBF70D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -124,8 +126,6 @@
 		4A8AD81D1A3781EF009E18E7 /* Meeting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Meeting.m; sourceTree = "<group>"; };
 		4A8AD81F1A3781F0009E18E7 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
 		4A8AD8201A3781F0009E18E7 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
-		4A8AD8221A3781F0009E18E7 /* Invite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Invite.h; sourceTree = "<group>"; };
-		4A8AD8231A3781F0009E18E7 /* Invite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Invite.m; sourceTree = "<group>"; };
 		88598EBC11613AA23BB683C0 /* Pods-Developer meeting systemTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Developer meeting systemTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Developer meeting systemTests/Pods-Developer meeting systemTests.release.xcconfig"; sourceTree = "<group>"; };
 		9D4D912310CBC0F7D4B6168F /* libPods-Developer meeting systemTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Developer meeting systemTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B51ED1373F60EC48DD5D31E0 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
@@ -165,8 +165,8 @@
 		4A207A361A31FD7200C7D8F0 /* Managed objects */ = {
 			isa = PBXGroup;
 			children = (
-				4A8AD8221A3781F0009E18E7 /* Invite.h */,
-				4A8AD8231A3781F0009E18E7 /* Invite.m */,
+				4A44A1AD1A38ABAB00B17A53 /* Invite.h */,
+				4A44A1AE1A38ABAB00B17A53 /* Invite.m */,
 				4A8AD81F1A3781F0009E18E7 /* User.h */,
 				4A8AD8201A3781F0009E18E7 /* User.m */,
 				4A8AD81C1A3781EF009E18E7 /* Meeting.h */,
@@ -557,7 +557,7 @@
 				4A8AD81E1A3781EF009E18E7 /* Meeting.m in Sources */,
 				4A6EC4ED1A3612880000ADED /* MeetingRoom.m in Sources */,
 				4A6EC4FF1A3674D90000ADED /* SearchableSelectableTableViewController.m in Sources */,
-				4A8AD8241A3781F0009E18E7 /* Invite.m in Sources */,
+				4A44A1AF1A38ABAB00B17A53 /* Invite.m in Sources */,
 				4A6E85621A2FEFA400FBF70D /* MeetingCell.m in Sources */,
 				4A6E85671A2FEFA400FBF70D /* Gridline.m in Sources */,
 				4A207A351A31FBC900C7D8F0 /* Model.xcdatamodeld in Sources */,

@@ -16,5 +16,22 @@
     invite.meeting = meeting;
     invite.user = user;
     invite.status = @(inviteStauts);
+    invite.hasBeenUpdated = @YES;
 }
+
++ (void)deleteInvalidInvitesInContext:(NSManagedObjectContext *)context
+{
+    NSFetchRequest *request = [Invite sqk_fetchRequest];
+    request.predicate = [NSPredicate predicateWithFormat:@"hasBeenUpdated == NO"];
+    
+    NSError *error;
+    NSArray *objects = [context executeFetchRequest:request error:&error];
+    [objects makeObjectsPerformSelector:@selector(sqk_deleteObject)];
+    
+    if(error)
+    {
+        NSLog(@"Error when deleting invalid invites. %s %@", __PRETTY_FUNCTION__, error.localizedDescription);
+    }
+}
+
 @end

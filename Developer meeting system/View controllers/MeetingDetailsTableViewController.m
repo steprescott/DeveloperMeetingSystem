@@ -63,6 +63,7 @@ static NSString *basicCellWithIdentifier = @"basicCell";
 @property (nonatomic, strong) NSString *meetingSubject;
 @property (nonatomic, strong) NSDate *meetingStartDate;
 @property (nonatomic, strong) NSDate *meetingEndDate;
+@property (nonatomic, strong) MeetingRoom *meetingMeetingRoom;
 
 - (IBAction)cancelButtonWasTapped:(id)sender;
 - (IBAction)doneButtonWasTapped:(id)sender;
@@ -95,6 +96,7 @@ static NSString *basicCellWithIdentifier = @"basicCell";
     self.meetingSubject = self.meeting.subject;
     self.meetingStartDate = self.meeting.startDate ? self.meeting.startDate : [NSDate new];
     self.meetingEndDate = self.meeting.endDate ? self.meeting.endDate : [NSDate dateWithTimeIntervalSinceNow:(60 * 60)];
+    self.meetingMeetingRoom = self.meeting.meetingRoom;
     
     self.dateCellsController = [[DateCellsController alloc] init];
     [self.dateCellsController attachToTableView:self.tableView
@@ -103,20 +105,24 @@ static NSString *basicCellWithIdentifier = @"basicCell";
                                                    self.endDateIndexPath : self.meetingEndDate} mutableCopy]];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.tableView reloadData];
+}
+
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
     
     TextFieldTableViewCell *subjectCell = (TextFieldTableViewCell *)[self.dateCellsController cellForIndexPath:self.subjectIndexPath ignoringPickerCells:YES];
-    YesNoTableViewCell *isPublicCell = (YesNoTableViewCell *)[self.dateCellsController cellForIndexPath:self.isPublicIndexPath ignoringPickerCells:YES];
     self.meetingSubject = subjectCell.textField.text;
-    self.meeting.isPublic = @([isPublicCell isYes]);
 }
 
 - (void)setMeeting:(Meeting *)meeting
 {
     _meeting = meeting;
-    self.title = meeting.subject;
+    self.title = meeting.subject ? meeting.subject : @"Create new meeting";
 }
 
 - (IBAction)cancelButtonWasTapped:(id)sender
@@ -133,15 +139,21 @@ static NSString *basicCellWithIdentifier = @"basicCell";
 {
     [self.dateCellsController hidePicker];
     
+    TextFieldTableViewCell *subjectCell = (TextFieldTableViewCell *)[self.dateCellsController cellForIndexPath:self.subjectIndexPath ignoringPickerCells:YES];
+    YesNoTableViewCell *isPublicCell = (YesNoTableViewCell *)[self.dateCellsController cellForIndexPath:self.isPublicIndexPath ignoringPickerCells:YES];
+    self.meetingSubject = subjectCell.textField.text;
+    
     if(!self.meeting)
     {
         self.meeting = [Meeting sqk_insertInContext:[ContextManager mainContext]];
     }
     
     self.meeting.subject = self.meetingSubject;
-    self.meeting.isPublic = @NO; //CHANGE ME
+    self.meeting.isPublic = @([isPublicCell isYes]);
     self.meeting.startDate = self.meetingStartDate;
     self.meeting.endDate = self.meetingEndDate;
+    self.meeting.hasBeenUpdated = @YES;
+    self.meeting.meetingRoom = self.meetingMeetingRoom;
     
     NSError *error;
     [self.meeting.managedObjectContext save:&error];
@@ -304,7 +316,7 @@ static NSString *basicCellWithIdentifier = @"basicCell";
                 {
                     cell = [tableView dequeueReusableCellWithIdentifier:rightDetailCellWithIdentifier forIndexPath:indexPath];
                     cell.textLabel.text = @"Room";
-                    cell.detailTextLabel.text = self.meeting.meetingRoom.name;
+                    cell.detailTextLabel.text = self.meetingMeetingRoom.name;
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                     break;
                 }
@@ -451,8 +463,7 @@ static NSString *basicCellWithIdentifier = @"basicCell";
                     searchableSelectableTableViewController.itemSearchProperty = @"name";
                     searchableSelectableTableViewController.didSelectItemBlock = ^void(id selectedItem, NSInteger selectedIndex) {
                         
-                        self.meeting.meetingRoom = selectedItem;
-                        [self.tableView reloadData];
+                        self.meetingMeetingRoom = selectedItem;
                     };
                     
                     [self.navigationController showViewController:searchableSelectableTableViewController sender:self];

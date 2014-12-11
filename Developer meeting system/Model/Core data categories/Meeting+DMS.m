@@ -48,6 +48,7 @@
                 managedObject.subject = dictionary[@"Subject"];
                 managedObject.startDate = [dateFormatter dateFromString:dictionary[@"StartDateTime"]];
                 managedObject.endDate = [dateFormatter dateFromString:dictionary[@"EndDateTime"]];
+                managedObject.isPublic = dictionary[@"IsPublic"];
                 managedObject.hasBeenUpdated = @YES;
                 
                 managedObject.meetingRoom = [MeetingRoom meetingRoomWithName:dictionary[@"MeetingRoom"][@"Name"] inContext:context];
@@ -167,22 +168,22 @@
     NSDateFormatter *dateFormatter = [NSDateFormatter new];
     [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
     
-    return @{@"Id": self.meetingID ? self.meetingID : @"Unknown",
-             @"Subject": self.subject ? self.subject : @"Unknown",
+    return @{@"Id": self.meetingID ? self.meetingID : @"",
+             @"Subject": self.subject ? self.subject : @"",
              @"StartDateTime": [dateFormatter stringFromDate:self.startDate],
              @"EndDateTime": [dateFormatter stringFromDate:self.endDate],
-             @"IsPublic": @([self.isPublic boolValue]),
-             @"MeetingNotes": self.notes ? self.notes : @"Unknown",
+             @"IsPublic": [self.isPublic boolValue] ? @"true" : @"false",
+             @"MeetingNotes": self.notes ? self.notes : @"",
              @"HostUser": @{
-                     @"Username": self.host.username ? self.host.username : @"Unknown",
-                     @"Firstname": self.host.firstName ? self.host.firstName : @"Unknown",
-                     @"Surname": self.host.lastName ? self.host.lastName : @"Unknown",
-                     @"ContactNumber": self.host.contactNumber ? self.host.contactNumber : @"Unknown"
+                     @"Username": self.host.username ? self.host.username : @"",
+                     @"Firstname": self.host.firstName ? self.host.firstName : @"",
+                     @"Surname": self.host.lastName ? self.host.lastName : @"",
+                     @"ContactNumber": self.host.contactNumber ? self.host.contactNumber : @""
                      },
              @"MeetingRoom": @{
-                     @"Name": self.meetingRoom.name ? self.meetingRoom.name : @"Unknown",
-                     @"Details": self.meetingRoom.details ? self.meetingRoom.details : @"Unknown",
-                     @"ContainsProjector": @([self.meetingRoom.containsProjector boolValue])
+                     @"Name": self.meetingRoom.name ? self.meetingRoom.name : @"",
+                     @"Details": self.meetingRoom.details ? self.meetingRoom.details : @"",
+                     @"ContainsProjector": [self.meetingRoom.containsProjector boolValue] ? @"true" : @"false"
                      },
              @"UsersInvited": [[self usernamesForUsers:[self usersInMeetingWithInvitesWithStatus:InviteStatusInvited]] allObjects],
              @"UsersAccepted": [[self usernamesForUsers:[self usersInMeetingWithInvitesWithStatus:InviteStatusAccepted]] allObjects],

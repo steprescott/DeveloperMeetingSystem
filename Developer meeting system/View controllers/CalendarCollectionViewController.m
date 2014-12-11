@@ -70,12 +70,6 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self.collectionView reloadData];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
     
     if(![WebServiceClient hasUserToken])
     {
@@ -83,41 +77,19 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
         return;
     }
     
-    NSManagedObjectContext *context = [ContextManager newPrivateContext];
-    
-    [[WebServiceClient sharedInstance] GETAllMeetingsRoomsSuccess:^(NSDictionary *JSON) {
-        NSArray *array = (NSArray *)JSON;
-        [MeetingRoom importMeetingRooms:array intoContext:context];
-        
-        [[WebServiceClient sharedInstance] GETAllUserDetailsSuccess:^(NSDictionary *JSON) {
-            NSArray *array = (NSArray *)JSON;
-            [User importUsers:array intoContext:context];
-            
-            [[WebServiceClient sharedInstance] GETAllMeetingsSuccess:^(NSDictionary *JSON) {
-                NSArray *array = (NSArray *)JSON;
-                [Meeting importMeetings:array intoContext:context];
-                [Meeting deleteInvalidMeetingsInContext:context];
-                [Invite deleteInvalidInvitesInContext:context];
-                
-                NSError *error;
-                [context save:&error];
-                
-                if(error)
-                {
-                    NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
-                }
-            }
-                                                             failure:^(NSError *error) {
-                                                                 NSLog(@"%s Meeting room error %@", __PRETTY_FUNCTION__, error.localizedDescription);
-                                                             }];
-        }
-                                                            failure:^(NSError *error) {
-                                                                NSLog(@"%s User error %@", __PRETTY_FUNCTION__, error.localizedDescription);
-                                                            }];
-    }
-                                                          failure:^(NSError *error) {
-                                                              NSLog(@"%s Meetings error %@", __PRETTY_FUNCTION__, error.localizedDescription);
-                                                          }];
+//    [SVProgressHUD showWithStatus:@"Synchronizing data" maskType:SVProgressHUDMaskTypeBlack];
+//    
+//    NSError *synchronizeError;
+//    [WebServiceClient synchronizeWithError:&synchronizeError];
+//    
+//    if(synchronizeError)
+//    {
+//        [SVProgressHUD showErrorWithStatus:@"Failed to synchronize" maskType:SVProgressHUDMaskTypeBlack];
+//    }
+//    else
+//    {
+//        [SVProgressHUD showSuccessWithStatus:@"Synchronized" maskType:SVProgressHUDMaskTypeBlack];
+//    }
     
     self.view.alpha = 1.0;
     [self.collectionViewCalendarLayout scrollCollectionViewToClosetSectionToCurrentTimeAnimated:NO];

@@ -12,8 +12,6 @@
 
 @property (weak, nonatomic) IBOutlet UITextView *textView;
 
-- (IBAction)doneButtonWasTapped:(id)sender;
-
 @end
 
 @implementation TextViewViewController
@@ -29,13 +27,14 @@
     self.textView.text = self.currentText;
 }
 
-- (IBAction)doneButtonWasTapped:(id)sender
+- (void)viewWillDisappear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
+    
     if(self.doneButtonWasTappedBlock)
     {
         self.doneButtonWasTappedBlock(self.textView.text);
     }
-    
-    [self.navigationController popViewControllerAnimated:YES];
 }
+
 @end

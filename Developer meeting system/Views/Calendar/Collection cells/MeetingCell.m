@@ -103,7 +103,6 @@
     _meeting = meeting;
     self.title.attributedText = [[NSAttributedString alloc] initWithString:meeting.subject ? meeting.subject : @"Unknown" attributes:[self titleAttributesHighlighted:self.selected]];
     self.location.attributedText = [[NSAttributedString alloc] initWithString:meeting.meetingRoom.name ? meeting.meetingRoom.name : @"Unknown" attributes:[self subtitleAttributesHighlighted:self.selected]];
-    [self updateColors];
 }
 
 - (void)updateColors
@@ -142,7 +141,7 @@
 
 - (UIColor *)backgroundColorHighlighted:(BOOL)selected
 {
-    if(self.meeting.isPublic)
+    if([self.meeting.isPublic boolValue])
     {
         return selected ? [UIColor colorWithHexString:@"35b1f1"] : [[UIColor colorWithHexString:@"35b1f1"] colorWithAlphaComponent:0.2];
     }
@@ -154,7 +153,7 @@
 
 - (UIColor *)textColorHighlighted:(BOOL)selected
 {
-    if(self.meeting.isPublic)
+    if([self.meeting.isPublic boolValue])
     {
         return selected ? [UIColor whiteColor] : [UIColor colorWithHexString:@"21729c"];
     }

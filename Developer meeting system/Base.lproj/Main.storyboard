@@ -495,13 +495,7 @@
                             <constraint firstItem="8ui-cK-e3P" firstAttribute="top" secondItem="7t5-C7-TnT" secondAttribute="top" id="m9e-Tw-75Q"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Notes" id="sK4-6I-LyW">
-                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="done" id="Exn-Ua-gtj">
-                            <connections>
-                                <action selector="doneButtonWasTapped:" destination="9Ls-NA-Qbp" id="YaG-Jz-BvC"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Notes" id="sK4-6I-LyW"/>
                     <connections>
                         <outlet property="textView" destination="8ui-cK-e3P" id="heF-hj-VG2"/>
                     </connections>

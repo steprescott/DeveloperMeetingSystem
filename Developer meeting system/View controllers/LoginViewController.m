@@ -22,21 +22,35 @@
 {
     [super viewDidLoad];
     
-    self.usernameTextField.text = @"GuestUser1";
+    self.usernameTextField.text = @"HostUser";
     self.passwordTextField.text = @"Password";
 }
 
 - (IBAction)loginButtonWasTapped:(id)sender
 {
-    [[WebServiceClient sharedInstance] loginWithUsername:self.usernameTextField.text
-                                                password:self.passwordTextField.text
-                                                 success:^(NSDictionary *JSON) {
-                                                     NSLog(@"%s JSON %@", __PRETTY_FUNCTION__, JSON);
-                                                     [self dismissViewControllerAnimated:YES completion:nil];
-                                                 }
-                                                 failure:^(NSError *error) {
-                                                     NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
-                                                 }];
+    [SVProgressHUD showWithStatus:@"Logging in" maskType:SVProgressHUDMaskTypeBlack];
+    
+    [[WebServiceClient sharedInstance] asyncLoginUsername:self.usernameTextField.text
+                                                 password:self.passwordTextField.text
+                                                  success:^(NSDictionary *JSON) {
+                                                      [SVProgressHUD showWithStatus:@"Synchronizing data" maskType:SVProgressHUDMaskTypeBlack];
+                                                      
+                                                      NSError *synchronizeError;
+                                                      [WebServiceClient synchronizeWithError:&synchronizeError];
+                                                      
+                                                      if(synchronizeError)
+                                                      {
+                                                          NSLog(@"Error when synchronizing. %@", synchronizeError.localizedDescription);
+                                                      }
+                                                      else
+                                                      {
+                                                          [SVProgressHUD showSuccessWithStatus:@"Synchronized" maskType:SVProgressHUDMaskTypeBlack];
+                                                          [self dismissViewControllerAnimated:YES completion:nil];
+                                                      }
+                                                  }
+                                                  failure:^(NSError *error) {
+                                                      [SVProgressHUD showErrorWithStatus:error.localizedDescription];
+                                                  }];
 }
 
 @end

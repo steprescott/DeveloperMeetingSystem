@@ -19,6 +19,6 @@
 @interface MeetingDetailsTableViewController : UITableViewController
 
 @property (nonatomic, assign) id <MeetingDetailsTableViewControllerDelegate> delegate;
-@property (nonatomic, weak) Meeting *meeting;\
+@property (nonatomic, weak) Meeting *meeting;
 
 @end

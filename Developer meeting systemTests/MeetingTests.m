@@ -71,11 +71,11 @@
 {
     __block NSError *mainError;
     
-    [self measureBlock:^{
-        [[WebServiceClient sharedInstance] GETAllMeetingsSuccess:nil failure:^(NSError *error) {
-            mainError = error;
-        }];
-    }];
+//    [self measureBlock:^{
+//        [[WebServiceClient sharedInstance] GETAllMeetingsSuccess:nil failure:^(NSError *error, NSInteger statusCode, NSString *reason) {
+//            mainError = error;
+//        }];
+//    }];
     
     XCTAssertFalse(mainError);
 }

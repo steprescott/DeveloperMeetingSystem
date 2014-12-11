@@ -64,6 +64,8 @@ static NSString *basicCellWithIdentifier = @"basicCell";
 @property (nonatomic, strong) NSDate *meetingStartDate;
 @property (nonatomic, strong) NSDate *meetingEndDate;
 @property (nonatomic, strong) MeetingRoom *meetingMeetingRoom;
+@property (nonatomic, strong) NSString *meetingNotes;
+@property (nonatomic, strong) NSMutableDictionary *invitesDictionary;
 
 - (IBAction)cancelButtonWasTapped:(id)sender;
 - (IBAction)doneButtonWasTapped:(id)sender;
@@ -75,6 +77,8 @@ static NSString *basicCellWithIdentifier = @"basicCell";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.tableView.allowsMultipleSelectionDuringEditing = NO;
     
     self.dateFormatter = [[NSDateFormatter alloc] init];
     self.dateFormatter.dateStyle = NSDateFormatterMediumStyle;
@@ -97,6 +101,13 @@ static NSString *basicCellWithIdentifier = @"basicCell";
     self.meetingStartDate = self.meeting.startDate ? self.meeting.startDate : [NSDate new];
     self.meetingEndDate = self.meeting.endDate ? self.meeting.endDate : [NSDate dateWithTimeIntervalSinceNow:(60 * 60)];
     self.meetingMeetingRoom = self.meeting.meetingRoom;
+    self.meetingNotes = self.meeting.notes;
+    
+    NSArray *sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"username" ascending:YES]];
+    self.invitesDictionary = [@{@(InviteStatusInvited) : self.meeting ? [[self.meeting usersInMeetingWithInvitesWithStatus:InviteStatusInvited] sortedArrayUsingDescriptors:sortDescriptors] : [NSSet set],
+                               @(InviteStatusAccepted) : self.meeting ? [[self.meeting usersInMeetingWithInvitesWithStatus:InviteStatusAccepted] sortedArrayUsingDescriptors:sortDescriptors] : [NSSet set],
+                               @(InviteStatusTentative) : self.meeting ? [[self.meeting usersInMeetingWithInvitesWithStatus:InviteStatusTentative] sortedArrayUsingDescriptors:sortDescriptors] : [NSSet set],
+                               @(InviteStatusDeclined) : self.meeting ? [[self.meeting usersInMeetingWithInvitesWithStatus:InviteStatusDeclined] sortedArrayUsingDescriptors:sortDescriptors] : [NSSet set]} mutableCopy];
     
     self.dateCellsController = [[DateCellsController alloc] init];
     [self.dateCellsController attachToTableView:self.tableView
@@ -108,7 +119,6 @@ static NSString *basicCellWithIdentifier = @"basicCell";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self.tableView reloadData];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -125,6 +135,53 @@ static NSString *basicCellWithIdentifier = @"basicCell";
     self.title = meeting.subject ? meeting.subject : @"Create new meeting";
 }
 
+- (void)setMeetingMeetingRoom:(MeetingRoom *)meetingMeetingRoom
+{
+    _meetingMeetingRoom = meetingMeetingRoom;
+    UITableViewCell *cell = [self.dateCellsController cellForIndexPath:self.roomIndexPath ignoringPickerCells:YES];
+    cell.detailTextLabel.text = self.meetingMeetingRoom.name;
+}
+
+- (void)setMeetingStartDate:(NSDate *)meetingStartDate
+{
+    _meetingStartDate = meetingStartDate;
+    UITableViewCell *cell = [self.dateCellsController cellForIndexPath:self.startDateIndexPath ignoringPickerCells:YES];
+    cell.detailTextLabel.text = [self.dateFormatter stringFromDate:self.meetingStartDate];
+}
+
+- (void)setMeetingEndDate:(NSDate *)meetingEndDate
+{
+    _meetingEndDate = meetingEndDate;
+    UITableViewCell *cell = [self.dateCellsController cellForIndexPath:self.endDateIndexPath ignoringPickerCells:YES];
+    cell.detailTextLabel.text = [self.dateFormatter stringFromDate:self.meetingEndDate];
+}
+
+- (void)setMeetingNotes:(NSString *)meetingNotes
+{
+    _meetingNotes = meetingNotes;
+    UITableViewCell *cell = [self.dateCellsController cellForIndexPath:self.notesIndexPath ignoringPickerCells:YES];
+    cell.detailTextLabel.text = self.meetingNotes;
+}
+
+- (BOOL)isDate1:(NSDate *)date1 aheadOfDate2:(NSDate *)date2
+{
+    switch ([date1 compare:date2])
+    {
+        case NSOrderedAscending:
+        case NSOrderedSame:
+        {
+            return NO;
+            break;
+        }
+            
+        case NSOrderedDescending:
+        {
+            return YES;
+            break;
+        }
+    }
+}
+
 - (IBAction)cancelButtonWasTapped:(id)sender
 {
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
@@ -139,6 +196,17 @@ static NSString *basicCellWithIdentifier = @"basicCell";
 {
     [self.dateCellsController hidePicker];
     
+    if([self isDate1:self.meetingStartDate aheadOfDate2:self.meetingEndDate])
+    {
+        NSLog(@"Start date can not be ahead or the same as end date");
+        return;
+    }
+    else if(![self isDate1:self.meetingEndDate aheadOfDate2:self.meetingStartDate])
+    {
+        NSLog(@"End date can not be before or the same as the start date.");
+        return;
+    }
+    
     TextFieldTableViewCell *subjectCell = (TextFieldTableViewCell *)[self.dateCellsController cellForIndexPath:self.subjectIndexPath ignoringPickerCells:YES];
     YesNoTableViewCell *isPublicCell = (YesNoTableViewCell *)[self.dateCellsController cellForIndexPath:self.isPublicIndexPath ignoringPickerCells:YES];
     self.meetingSubject = subjectCell.textField.text;
@@ -152,47 +220,64 @@ static NSString *basicCellWithIdentifier = @"basicCell";
     self.meeting.isPublic = @([isPublicCell isYes]);
     self.meeting.startDate = self.meetingStartDate;
     self.meeting.endDate = self.meetingEndDate;
-    self.meeting.hasBeenUpdated = @YES;
     self.meeting.meetingRoom = self.meetingMeetingRoom;
+    self.meeting.notes = self.meetingNotes;
     
-    NSError *error;
-    [self.meeting.managedObjectContext save:&error];
+    [self.meeting.invites makeObjectsPerformSelector:@selector(sqk_deleteObject)];
     
-    if(error)
-    {
-        NSLog(@"%s Error %@", __PRETTY_FUNCTION__, error.localizedDescription);
-    }
+    [[self.invitesDictionary[@(InviteStatusInvited)] allObjects] enumerateObjectsUsingBlock:^(User *user, NSUInteger idx, BOOL *stop) {
+        [Invite createInviteForMeeting:self.meeting
+                              withUser:user
+                             forStatus:InviteStatusInvited
+                           intoContext:self.meeting.managedObjectContext];
+    }];
+    
+    [[self.invitesDictionary[@(InviteStatusAccepted)] allObjects] enumerateObjectsUsingBlock:^(User *user, NSUInteger idx, BOOL *stop) {
+        [Invite createInviteForMeeting:self.meeting
+                              withUser:user
+                             forStatus:InviteStatusAccepted
+                           intoContext:self.meeting.managedObjectContext];
+    }];
+    
+    [[self.invitesDictionary[@(InviteStatusTentative)] allObjects] enumerateObjectsUsingBlock:^(User *user, NSUInteger idx, BOOL *stop) {
+        [Invite createInviteForMeeting:self.meeting
+                              withUser:user
+                             forStatus:InviteStatusTentative
+                           intoContext:self.meeting.managedObjectContext];
+    }];
+    
+    [[self.invitesDictionary[@(InviteStatusDeclined)] allObjects] enumerateObjectsUsingBlock:^(User *user, NSUInteger idx, BOOL *stop) {
+        [Invite createInviteForMeeting:self.meeting
+                              withUser:user
+                             forStatus:InviteStatusDeclined
+                           intoContext:self.meeting.managedObjectContext];
+    }];
+    
+    self.meeting.hasBeenUpdated = @YES;
+    
+    NSError *meetingError;
     
     if(!self.meeting.meetingID)
     {
-        [[WebServiceClient sharedInstance] POSTMeeting:[self.meeting JSONRepresentation]
-                                               success:^(NSDictionary *JSON) {
-                                                   [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-                                                   
-                                                   if([self.delegate respondsToSelector:@selector(meetingDetailsFormDissmissed)])
-                                                   {
-                                                       [self.delegate meetingDetailsFormDissmissed];
-                                                   }
-                                               }
-                                               failure:^(NSError *error) {
-                                                   NSLog(@"%s Error when exicuting POST request to meeting %@", __PRETTY_FUNCTION__, error.localizedDescription);
-                                               }];
+        NSDictionary *response = [[WebServiceClient sharedInstance] POSTMeeting:[self.meeting JSONRepresentation]
+                                                                          error:&meetingError];
+        
     }
     else
     {
-        [[WebServiceClient sharedInstance] PUTMeeting:[self.meeting JSONRepresentation]
-                                              success:^(NSDictionary *JSON) {
-                                                  [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-                                                  
-                                                  if([self.delegate respondsToSelector:@selector(meetingDetailsFormDissmissed)])
-                                                  {
-                                                      [self.delegate meetingDetailsFormDissmissed];
-                                                  }
-                                              }
-                                              failure:^(NSError *error) {
-                                                  NSLog(@"%s Error when exicuting PUT request to meeting %@", __PRETTY_FUNCTION__, error.localizedDescription);
-                                              }];
-
+        NSDictionary *response = [[WebServiceClient sharedInstance] PUTMeeting:[self.meeting JSONRepresentation]
+                                                                         error:&meetingError];
+        
+    }
+    
+    if(meetingError)
+    {
+        NSString *reason = meetingError.userInfo[@"WebServiceClientErrorMessage"] ? meetingError.userInfo[@"WebServiceClientErrorMessage"] : meetingError.localizedDescription;
+        NSLog(@"Error with POST/PUT meeting. %@", reason);
+    }
+    else
+    {
+        [self dismissViewControllerAnimated:YES completion:nil];
     }
 }
 
@@ -215,25 +300,25 @@ static NSString *basicCellWithIdentifier = @"basicCell";
             
         case TableViewSectionInvites:
         {
-            numberOfRows = [self.meeting invitesWithStatus:InviteStatusInvited].count;
+            numberOfRows = [self.invitesDictionary[@(InviteStatusInvited)] allObjects].count;
             break;
         }
             
         case TableViewSectionAcceptedInvites:
         {
-            numberOfRows = [self.meeting invitesWithStatus:InviteStatusAccepted].count;
+            numberOfRows = [self.invitesDictionary[@(InviteStatusAccepted)] allObjects].count;
             break;
         }
             
         case TableViewSectionTentativeInvites:
         {
-            numberOfRows = [self.meeting invitesWithStatus:InviteStatusTentative].count;
+            numberOfRows = [self.invitesDictionary[@(InviteStatusTentative)] allObjects].count;
             break;
         }
             
         case TableViewSectionDeclinedInvites:
         {
-            numberOfRows = [self.meeting invitesWithStatus:InviteStatusDeclined].count;
+            numberOfRows = [self.invitesDictionary[@(InviteStatusDeclined)] allObjects].count;
             break;
         }
             
@@ -316,7 +401,7 @@ static NSString *basicCellWithIdentifier = @"basicCell";
                 {
                     cell = [tableView dequeueReusableCellWithIdentifier:rightDetailCellWithIdentifier forIndexPath:indexPath];
                     cell.textLabel.text = @"Room";
-                    cell.detailTextLabel.text = self.meetingMeetingRoom.name;
+                    cell.detailTextLabel.text = self.meetingMeetingRoom.name ? self.meetingMeetingRoom.name : @"Not set";
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                     break;
                 }
@@ -325,7 +410,7 @@ static NSString *basicCellWithIdentifier = @"basicCell";
                 {
                     cell = [tableView dequeueReusableCellWithIdentifier:rightDetailCellWithIdentifier forIndexPath:indexPath];
                     cell.textLabel.text = @"Start date";
-                    cell.detailTextLabel.text = [self.dateFormatter stringFromDate:self.meeting.startDate];
+                    cell.detailTextLabel.text = [self.dateFormatter stringFromDate:self.meetingStartDate];
                     break;
                 }
                     
@@ -333,7 +418,7 @@ static NSString *basicCellWithIdentifier = @"basicCell";
                 {
                     cell = [tableView dequeueReusableCellWithIdentifier:rightDetailCellWithIdentifier forIndexPath:indexPath];
                     cell.textLabel.text = @"End date";
-                    cell.detailTextLabel.text = [self.dateFormatter stringFromDate:self.meeting.endDate];
+                    cell.detailTextLabel.text = [self.dateFormatter stringFromDate:self.meetingEndDate];
                     break;
                 }
                     
@@ -356,7 +441,7 @@ static NSString *basicCellWithIdentifier = @"basicCell";
                 {
                     cell = [tableView dequeueReusableCellWithIdentifier:rightDetailCellWithIdentifier forIndexPath:indexPath];
                     cell.textLabel.text = @"Notes";
-                    cell.detailTextLabel.text = self.meeting.notes;
+                    cell.detailTextLabel.text = self.meetingNotes ? self.meetingNotes : @"No notes";
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                     break;
                 }
@@ -367,8 +452,8 @@ static NSString *basicCellWithIdentifier = @"basicCell";
         case TableViewSectionInvites:
         {
             cell = [tableView dequeueReusableCellWithIdentifier:basicCellWithIdentifier forIndexPath:indexPath];
-            Invite *invite = (Invite *)[[self.meeting invitesWithStatus:InviteStatusInvited] allObjects][indexPath.row];
-            cell.textLabel.text = invite.user.username;
+            User *user = (User *)[self.invitesDictionary[@(InviteStatusInvited)] allObjects][indexPath.row];
+            cell.textLabel.text = user.username;
             cell.textLabel.textAlignment = NSTextAlignmentLeft;
             cell.textLabel.textColor = [UIColor blackColor];
             break;
@@ -377,8 +462,8 @@ static NSString *basicCellWithIdentifier = @"basicCell";
         case TableViewSectionAcceptedInvites:
         {
             cell = [tableView dequeueReusableCellWithIdentifier:basicCellWithIdentifier forIndexPath:indexPath];
-            Invite *invite = (Invite *)[[self.meeting invitesWithStatus:InviteStatusAccepted] allObjects][indexPath.row];
-            cell.textLabel.text = invite.user.username;
+            User *user = (User *)[self.invitesDictionary[@(InviteStatusAccepted)] allObjects][indexPath.row];
+            cell.textLabel.text = user.username;
             cell.textLabel.textAlignment = NSTextAlignmentLeft;
             cell.textLabel.textColor = [UIColor blackColor];
             break;
@@ -387,8 +472,8 @@ static NSString *basicCellWithIdentifier = @"basicCell";
         case TableViewSectionTentativeInvites:
         {
             cell = [tableView dequeueReusableCellWithIdentifier:basicCellWithIdentifier forIndexPath:indexPath];
-            Invite *invite = (Invite *)[[self.meeting invitesWithStatus:InviteStatusTentative] allObjects][indexPath.row];
-            cell.textLabel.text = invite.user.username;
+            User *user = (User *)[self.invitesDictionary[@(InviteStatusTentative)] allObjects][indexPath.row];
+            cell.textLabel.text = user.username;
             cell.textLabel.textAlignment = NSTextAlignmentLeft;
             cell.textLabel.textColor = [UIColor blackColor];
             break;
@@ -397,8 +482,8 @@ static NSString *basicCellWithIdentifier = @"basicCell";
         case TableViewSectionDeclinedInvites:
         {
             cell = [tableView dequeueReusableCellWithIdentifier:basicCellWithIdentifier forIndexPath:indexPath];
-            Invite *invite = (Invite *)[[self.meeting invitesWithStatus:InviteStatusDeclined] allObjects][indexPath.row];
-            cell.textLabel.text = invite.user.username;
+            User *user = (User *)[self.invitesDictionary[@(InviteStatusDeclined)] allObjects][indexPath.row];
+            cell.textLabel.text = user.username;
             cell.textLabel.textAlignment = NSTextAlignmentLeft;
             cell.textLabel.textColor = [UIColor blackColor];
             break;
@@ -488,10 +573,9 @@ static NSString *basicCellWithIdentifier = @"basicCell";
                 case TableViewSectionMeetingDetailsRowNotes:
                 {
                     TextViewViewController *textViewViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"TextViewViewController"];
-                    textViewViewController.currentText = self.meeting.notes;
+                    textViewViewController.currentText = self.meetingNotes;
                     textViewViewController.doneButtonWasTappedBlock = ^void(NSString *updatedText) {
-                        self.meeting.notes = updatedText;
-                        [self.tableView reloadData];
+                        self.meetingNotes = updatedText;
                     };
                     
                     [self.navigationController showViewController:textViewViewController sender:self];
@@ -526,13 +610,35 @@ static NSString *basicCellWithIdentifier = @"basicCell";
                     searchableSelectableTableViewController.classOfItems = [User class];
                     searchableSelectableTableViewController.itemTextProperty = @"username";
                     searchableSelectableTableViewController.itemSearchProperty = @"username";
-                    searchableSelectableTableViewController.filterItems = [User usernamesForUsers:[self.meeting usersInMeeting]];
+                    
+                    NSMutableSet *filterSet = [NSMutableSet set];
+                    
+                    [filterSet addObjectsFromArray:[[User usernamesForUsers:self.invitesDictionary[@(InviteStatusInvited)]] allObjects]];
+                    [filterSet addObjectsFromArray:[[User usernamesForUsers:self.invitesDictionary[@(InviteStatusAccepted)]] allObjects]];
+                    [filterSet addObjectsFromArray:[[User usernamesForUsers:self.invitesDictionary[@(InviteStatusTentative)]] allObjects]];
+                    [filterSet addObjectsFromArray:[[User usernamesForUsers:self.invitesDictionary[@(InviteStatusDeclined)]] allObjects]];
+                    
+                    User *activeUser = [User activeUser];
+                    if(activeUser)
+                    {
+                        [filterSet addObject:[[[User usernamesForUsers:[NSSet setWithObject:activeUser]] allObjects] firstObject]];
+                    }
+                    
+                    searchableSelectableTableViewController.filterItems = filterSet;
                     searchableSelectableTableViewController.didSelectItemBlock = ^void(id selectedItem, NSInteger selectedIndex) {
+
+                        NSMutableSet *set = [self.invitesDictionary[@(InviteStatusInvited)] mutableCopy];
                         
-                        [Invite createInviteForMeeting:self.meeting
-                                              withUser:selectedItem
-                                             forStatus:InviteStatusInvited
-                                           intoContext:self.meeting.managedObjectContext];
+                        if(set.count > 0)
+                        {
+                            [set addObject:selectedItem];
+                            self.invitesDictionary[@(InviteStatusInvited)] = [set sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"username" ascending:YES]]] ;
+                        }
+                        else
+                        {
+                            self.invitesDictionary[@(InviteStatusInvited)] = [NSSet setWithObject:selectedItem];
+                        }
+                        
                         
                         [self.tableView reloadData];
                     };
@@ -543,24 +649,64 @@ static NSString *basicCellWithIdentifier = @"basicCell";
                 
                 case TableViewSectionActionsRowDeleteMeeting:
                 {
-                    [[WebServiceClient sharedInstance] DELETEMeetingWithID:self.meeting.meetingID
-                                                          success:^(NSDictionary *JSON) {
-                                                              [self.meeting sqk_deleteObject];
-                                                              [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-                                                              
-                                                              if([self.delegate respondsToSelector:@selector(meetingDetailsFormDissmissed)])
-                                                              {
-                                                                  [self.delegate meetingDetailsFormDissmissed];
-                                                              }
-                                                          }
-                                                          failure:^(NSError *error) {
-                                                              NSLog(@"%s Error when exicuting DELETE request to meeting %@", __PRETTY_FUNCTION__, error.localizedDescription);
-                                                          }];
+                    NSError *deleteError;
+                    NSDictionary *response = [[WebServiceClient sharedInstance] DELETEMeetingWithID:self.meeting.meetingID
+                                                                                              error:&deleteError];
+                    if(deleteError)
+                    {
+                        NSString *reason = deleteError.userInfo[@"WebServiceClientErrorMessage"] ? deleteError.userInfo[@"WebServiceClientErrorMessage"] : deleteError.localizedDescription;
+                        NSLog(@"Error with DELETing meeting. %@", reason);
+                    }
+                    else
+                    {
+                        [self.meeting sqk_deleteObject];
+                        [self dismissViewControllerAnimated:YES completion:nil];
+                    }
                     break;
                 }
             }
             break;
         }
+    }
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    switch (indexPath.section)
+    {
+        case TableViewSectionInvites:
+        case TableViewSectionAcceptedInvites:
+        case TableViewSectionTentativeInvites:
+        case TableViewSectionDeclinedInvites:
+        {
+            return YES;
+            break;
+        }
+            
+        default:
+        {
+            return NO;
+            break;
+        }
+    }
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return @"Remove invite";
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle == UITableViewCellEditingStyleDelete)
+    {
+        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        NSString *username = cell.textLabel.text;
+        User *user = [User userWithUsername:username inContext:[ContextManager mainContext]];
+        NSMutableSet *set = [self.invitesDictionary[@(indexPath.section - 1)] mutableCopy];
+        [set removeObject:user];
+        self.invitesDictionary[@(indexPath.section - 1)] = set;
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     }
 }
 
@@ -574,11 +720,11 @@ static NSString *basicCellWithIdentifier = @"basicCell";
     
     if(path.row == self.startDateIndexPath.row)
     {
-        self.meeting.startDate = date;
+        self.meetingStartDate = date;
     }
     else
     {
-        self.meeting.endDate = date;
+        self.meetingEndDate = date;
     }
 }
 

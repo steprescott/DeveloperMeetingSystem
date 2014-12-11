@@ -17,6 +17,8 @@ typedef NS_ENUM(NSUInteger, RequestType) {
 
 @interface WebServiceClient : NSObject
 
+@property (nonatomic, strong) NSString *username;
+
 + (instancetype)sharedInstance;
 
 /**
@@ -26,54 +28,18 @@ typedef NS_ENUM(NSUInteger, RequestType) {
  */
 + (BOOL)hasUserToken;
 
-/**
- *  This method is the only one that calls an endpoint that doesn't require a User Token.
- *  Use this to return a User Token that can be used to validate access level.
- *
- *  @param username     The username of the User you wish to validate
- *  @param password     The password of the User you wish to validate
- *  @param successBlock This is the block that will be called when the API endpoint returns a 200.
- *                      Within this JSON is the User Token for the user.
- *  @param failureBlock This is the block that will be called when the API endpoint returns anything other than a 200.
- *                      401 = Invalid API Key
-                        403 = IP not whitelisted
-                        404 = User not found
- */
-- (void)loginWithUsername:(NSString *)username password:(NSString *)password success:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock;
++ (void)synchronizeWithError:(NSError **)error;
 
-/**
- *  GET Methods. These aim to retreive infomation from the API.
- *
- *  @param successBlock This is the block that will be called when the API endpoint returns a 200.
- *  @param failureBlock This is the block that will be called when the API endpoint returns anything other than a 200.
- */
-- (void)GETAllMeetingsSuccess:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock;
-- (void)GETAllMeetingsRoomsSuccess:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock;
-- (void)GETAllUserDetailsSuccess:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock;
-- (void)GETAllRolesSuccess:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock;
+- (void)asyncLoginUsername:(NSString *)username password:(NSString *)password success:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock;
 
-/**
- *  POST Methods. POST requests inserts a new object on the API.
- *
- *  @param successBlock This is the block that will be called when the API endpoint returns a 200.
- *  @param failureBlock This is the block that will be called when the API endpoint returns anything other than a 200.
- */
-- (void)POSTMeeting:(NSDictionary *)meetingJSON success:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock;
+- (id)GETAllMeetingsRoomsWithError:(NSError **)error;
+- (id)GETAllUserDetailsWithError:(NSError **)error;
+- (id)GETAllMeetingsWithError:(NSError **)error;
 
-/**
- *  PUT Methods. PUT requests updates objects currently on the API.
- *
- *  @param successBlock This is the block that will be called when the API endpoint returns a 200.
- *  @param failureBlock This is the block that will be called when the API endpoint returns anything other than a 200.
- */
-- (void)PUTMeeting:(NSDictionary *)meetingJSON success:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock;
+- (id)POSTMeeting:(NSDictionary *)JSON error:(NSError **)error;
 
-/**
- *  DELETE Methods. DELETE requests deletes the object from the API.
- *
- *  @param successBlock This is the block that will be called when the API endpoint returns a 200.
- *  @param failureBlock This is the block that will be called when the API endpoint returns anything other than a 200.
- */
-- (void)DELETEMeetingWithID:(NSString *)meetingID success:(void (^)(NSDictionary *JSON))successBlock failure:(void (^)(NSError *error))failureBlock;
+- (id)PUTMeeting:(NSDictionary *)JSON error:(NSError **)error;
+
+- (id)DELETEMeetingWithID:(NSString *)meetingID error:(NSError **)error;
 
 @end

@@ -7,6 +7,8 @@
 //
 
 #import "User+DMS.h"
+#import "WebServiceClient.h"
+#import "ContextManager.h"
 
 @implementation User (DMS)
 
@@ -69,6 +71,11 @@
     }
     
     return [objects firstObject];
+}
+
++ (User *)activeUser
+{
+    return [self userWithUsername:[WebServiceClient sharedInstance].username inContext:[ContextManager mainContext]];
 }
 
 + (NSSet *)usernamesForUsers:(NSSet *)users

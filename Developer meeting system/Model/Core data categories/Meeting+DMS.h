@@ -16,6 +16,7 @@
 
 - (NSSet *)invitesWithStatus:(InviteStatus)inviteStauts;
 - (NSSet *)usersInMeeting;
+- (NSSet *)usersInMeetingWithInvitesWithStatus:(InviteStatus)inviteStauts;
 - (NSDictionary *)JSONRepresentation;
 
 @end

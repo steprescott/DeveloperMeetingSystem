@@ -10,6 +10,7 @@
 
 @interface TextViewViewController : UIViewController
 
+@property (nonatomic, assign) BOOL enabled;
 @property (nonatomic, strong) NSString *currentText;
 @property (nonatomic, copy) void (^doneButtonWasTappedBlock)(NSString *updatedText);
 

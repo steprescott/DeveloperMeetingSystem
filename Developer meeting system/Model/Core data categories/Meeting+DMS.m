@@ -49,6 +49,7 @@
                 managedObject.startDate = [dateFormatter dateFromString:dictionary[@"StartDateTime"]];
                 managedObject.endDate = [dateFormatter dateFromString:dictionary[@"EndDateTime"]];
                 managedObject.isPublic = dictionary[@"IsPublic"];
+                managedObject.notes = dictionary[@"MeetingNotes"];
                 managedObject.hasBeenUpdated = @YES;
                 
                 managedObject.meetingRoom = [MeetingRoom meetingRoomWithName:dictionary[@"MeetingRoom"][@"Name"] inContext:context];

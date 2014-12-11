@@ -16,6 +16,12 @@
 
 @implementation YesNoTableViewCell
 
+-(void)setEnabled:(BOOL)enabled
+{
+    _enabled = enabled;
+    self.segmentedControl.enabled = self.enabled;
+}
+
 - (BOOL)isYes
 {
     return self.segmentedControl.selectedSegmentIndex;

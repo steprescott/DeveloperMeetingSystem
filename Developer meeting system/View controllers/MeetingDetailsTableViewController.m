@@ -60,6 +60,7 @@ static NSString *basicCellWithIdentifier = @"basicCell";
 @property (nonatomic, strong) NSIndexPath *isPublicIndexPath;
 @property (nonatomic, strong) NSIndexPath *notesIndexPath;
 
+@property (nonatomic, assign) BOOL userCanEdit;
 @property (nonatomic, strong) NSString *meetingSubject;
 @property (nonatomic, strong) NSDate *meetingStartDate;
 @property (nonatomic, strong) NSDate *meetingEndDate;
@@ -103,17 +104,27 @@ static NSString *basicCellWithIdentifier = @"basicCell";
     self.meetingMeetingRoom = self.meeting.meetingRoom;
     self.meetingNotes = self.meeting.notes;
     
+    if(!self.meeting.host || [self.meeting.host.username isEqualToString:[User activeUser].username])
+    {
+        self.userCanEdit = YES;
+        
+        self.dateCellsController = [[DateCellsController alloc] init];
+        [self.dateCellsController attachToTableView:self.tableView
+                                       withDelegate:self
+                                        withMapping:[@{self.startDateIndexPath : self.meetingStartDate,
+                                                       self.endDateIndexPath : self.meetingEndDate} mutableCopy]];
+    }
+    else
+    {
+        self.userCanEdit = NO;
+        self.navigationItem.rightBarButtonItem = nil;
+    }
+    
     NSArray *sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"username" ascending:YES]];
     self.invitesDictionary = [@{@(InviteStatusInvited) : self.meeting ? [[self.meeting usersInMeetingWithInvitesWithStatus:InviteStatusInvited] sortedArrayUsingDescriptors:sortDescriptors] : [NSSet set],
                                @(InviteStatusAccepted) : self.meeting ? [[self.meeting usersInMeetingWithInvitesWithStatus:InviteStatusAccepted] sortedArrayUsingDescriptors:sortDescriptors] : [NSSet set],
                                @(InviteStatusTentative) : self.meeting ? [[self.meeting usersInMeetingWithInvitesWithStatus:InviteStatusTentative] sortedArrayUsingDescriptors:sortDescriptors] : [NSSet set],
                                @(InviteStatusDeclined) : self.meeting ? [[self.meeting usersInMeetingWithInvitesWithStatus:InviteStatusDeclined] sortedArrayUsingDescriptors:sortDescriptors] : [NSSet set]} mutableCopy];
-    
-    self.dateCellsController = [[DateCellsController alloc] init];
-    [self.dateCellsController attachToTableView:self.tableView
-                                   withDelegate:self
-                                    withMapping:[@{self.startDateIndexPath : self.meetingStartDate,
-                                                   self.endDateIndexPath : self.meetingEndDate} mutableCopy]];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -127,12 +138,13 @@ static NSString *basicCellWithIdentifier = @"basicCell";
     
     TextFieldTableViewCell *subjectCell = (TextFieldTableViewCell *)[self.dateCellsController cellForIndexPath:self.subjectIndexPath ignoringPickerCells:YES];
     self.meetingSubject = subjectCell.textField.text;
+    [subjectCell.textField resignFirstResponder];
 }
 
 - (void)setMeeting:(Meeting *)meeting
 {
     _meeting = meeting;
-    self.title = meeting.subject ? meeting.subject : @"Create new meeting";
+    self.title = meeting.meetingID ? meeting.subject : @"Create new meeting";
 }
 
 - (void)setMeetingMeetingRoom:(MeetingRoom *)meetingMeetingRoom
@@ -198,12 +210,12 @@ static NSString *basicCellWithIdentifier = @"basicCell";
     
     if([self isDate1:self.meetingStartDate aheadOfDate2:self.meetingEndDate])
     {
-        NSLog(@"Start date can not be ahead or the same as end date");
+        [SVProgressHUD showErrorWithStatus:@"Start date can not be ahead or the same as end date" maskType:SVProgressHUDMaskTypeBlack];
         return;
     }
     else if(![self isDate1:self.meetingEndDate aheadOfDate2:self.meetingStartDate])
     {
-        NSLog(@"End date can not be before or the same as the start date.");
+        [SVProgressHUD showErrorWithStatus:@"End date can not be before or the same as the start date." maskType:SVProgressHUDMaskTypeBlack];
         return;
     }
     
@@ -222,6 +234,7 @@ static NSString *basicCellWithIdentifier = @"basicCell";
     self.meeting.endDate = self.meetingEndDate;
     self.meeting.meetingRoom = self.meetingMeetingRoom;
     self.meeting.notes = self.meetingNotes;
+    self.meeting.hasBeenUpdated = @NO;
     
     [self.meeting.invites makeObjectsPerformSelector:@selector(sqk_deleteObject)];
     
@@ -253,30 +266,33 @@ static NSString *basicCellWithIdentifier = @"basicCell";
                            intoContext:self.meeting.managedObjectContext];
     }];
     
-    self.meeting.hasBeenUpdated = @YES;
-    
     NSError *meetingError;
+    
+    NSDictionary *response;
+    NSString *successMessage;
     
     if(!self.meeting.meetingID)
     {
-        NSDictionary *response = [[WebServiceClient sharedInstance] POSTMeeting:[self.meeting JSONRepresentation]
-                                                                          error:&meetingError];
+        response = [[WebServiceClient sharedInstance] POSTMeeting:[self.meeting JSONRepresentation]
+                                                            error:&meetingError];
+        self.meeting.meetingID = response[@"MeetingId"];
+        successMessage = @"Meeting created";
         
     }
     else
     {
-        NSDictionary *response = [[WebServiceClient sharedInstance] PUTMeeting:[self.meeting JSONRepresentation]
-                                                                         error:&meetingError];
-        
+        [[WebServiceClient sharedInstance] PUTMeeting:[self.meeting JSONRepresentation]
+                                                error:&meetingError];
+        successMessage = @"Meeting updated";
     }
     
     if(meetingError)
     {
-        NSString *reason = meetingError.userInfo[@"WebServiceClientErrorMessage"] ? meetingError.userInfo[@"WebServiceClientErrorMessage"] : meetingError.localizedDescription;
-        NSLog(@"Error with POST/PUT meeting. %@", reason);
+        [SVProgressHUD showErrorWithStatus:meetingError.userInfo[webServiceClientErrorMessage] maskType:SVProgressHUDMaskTypeBlack];
     }
     else
     {
+        [SVProgressHUD showSuccessWithStatus:successMessage maskType:SVProgressHUDMaskTypeBlack];
         [self dismissViewControllerAnimated:YES completion:nil];
     }
 }
@@ -324,7 +340,17 @@ static NSString *basicCellWithIdentifier = @"basicCell";
             
         case TableViewSectionActions:
         {
-            numberOfRows = 2;
+            if(self.userCanEdit)
+            {
+                if(self.meeting.meetingID)
+                {
+                    numberOfRows = 2;
+                }
+                else
+                {
+                    numberOfRows = 1;
+                }
+            }
         }
     }
     
@@ -392,6 +418,7 @@ static NSString *basicCellWithIdentifier = @"basicCell";
                     TextFieldTableViewCell *textFieldCell = (TextFieldTableViewCell *)[tableView dequeueReusableCellWithIdentifier:textFieldCellWithIdentifier forIndexPath:indexPath];
                     textFieldCell.label.text = @"Subject";
                     textFieldCell.textField.text = self.meetingSubject;
+                    textFieldCell.enabled = self.userCanEdit;
                     
                     cell = textFieldCell;
                     break;
@@ -427,6 +454,7 @@ static NSString *basicCellWithIdentifier = @"basicCell";
                     YesNoTableViewCell *yesNoCell = (YesNoTableViewCell *)[tableView dequeueReusableCellWithIdentifier:yesNoCellWithIdentifier forIndexPath:indexPath];
                     
                     yesNoCell.label.text = @"Is public";
+                    yesNoCell.enabled = self.userCanEdit;
                     
                     if([self.meeting.isPublic boolValue])
                     {
@@ -535,45 +563,29 @@ static NSString *basicCellWithIdentifier = @"basicCell";
         {
             switch (indexPath.row)
             {
-                case TableViewSectionMeetingDetailsRowSubject:
-                {
-                    break;
-                }
-                    
                 case TableViewSectionMeetingDetailsRowRoom:
                 {
-                    SearchableSelectableTableViewController *searchableSelectableTableViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"SelectableListTableViewController"];
-                    searchableSelectableTableViewController.classOfItems = [MeetingRoom class];
-                    searchableSelectableTableViewController.itemTextProperty = @"name";
-                    searchableSelectableTableViewController.itemSearchProperty = @"name";
-                    searchableSelectableTableViewController.didSelectItemBlock = ^void(id selectedItem, NSInteger selectedIndex) {
+                    if(self.userCanEdit)
+                    {
+                        SearchableSelectableTableViewController *searchableSelectableTableViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"SelectableListTableViewController"];
+                        searchableSelectableTableViewController.classOfItems = [MeetingRoom class];
+                        searchableSelectableTableViewController.itemTextProperty = @"name";
+                        searchableSelectableTableViewController.itemSearchProperty = @"name";
+                        searchableSelectableTableViewController.didSelectItemBlock = ^void(id selectedItem, NSInteger selectedIndex) {
+                            
+                            self.meetingMeetingRoom = selectedItem;
+                        };
                         
-                        self.meetingMeetingRoom = selectedItem;
-                    };
-                    
-                    [self.navigationController showViewController:searchableSelectableTableViewController sender:self];
+                        [self.navigationController showViewController:searchableSelectableTableViewController sender:self];
+                    }
                     break;
                 }
-                    
-                case TableViewSectionMeetingDetailsRowStartDate:
-                {
-                    break;
-                }
-                    
-                case TableViewSectionMeetingDetailsRowEndDate:
-                {
-                    break;
-                }
-                    
-                case TableViewSectionMeetingDetailsRowIsPublic:
-                {
-                    break;
-                }
-                    
+
                 case TableViewSectionMeetingDetailsRowNotes:
                 {
                     TextViewViewController *textViewViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"TextViewViewController"];
                     textViewViewController.currentText = self.meetingNotes;
+                    textViewViewController.enabled = self.userCanEdit;
                     textViewViewController.doneButtonWasTappedBlock = ^void(NSString *updatedText) {
                         self.meetingNotes = updatedText;
                     };
@@ -584,22 +596,7 @@ static NSString *basicCellWithIdentifier = @"basicCell";
             }
             break;
         }
-            
-        case TableViewSectionAcceptedInvites:
-        {
-            break;
-        }
-            
-        case TableViewSectionDeclinedInvites:
-        {
-            break;
-        }
-            
-        case TableViewSectionInvites:
-        {
-            break;
-        }
-            
+        
         case TableViewSectionActions:
         {
             switch (indexPath.row)
@@ -650,12 +647,11 @@ static NSString *basicCellWithIdentifier = @"basicCell";
                 case TableViewSectionActionsRowDeleteMeeting:
                 {
                     NSError *deleteError;
-                    NSDictionary *response = [[WebServiceClient sharedInstance] DELETEMeetingWithID:self.meeting.meetingID
-                                                                                              error:&deleteError];
+                    [[WebServiceClient sharedInstance] DELETEMeetingWithID:self.meeting.meetingID
+                                                                     error:&deleteError];
                     if(deleteError)
                     {
-                        NSString *reason = deleteError.userInfo[@"WebServiceClientErrorMessage"] ? deleteError.userInfo[@"WebServiceClientErrorMessage"] : deleteError.localizedDescription;
-                        NSLog(@"Error with DELETing meeting. %@", reason);
+                        [SVProgressHUD showErrorWithStatus:deleteError.userInfo[webServiceClientErrorMessage] maskType:SVProgressHUDMaskTypeBlack];
                     }
                     else
                     {
@@ -679,7 +675,7 @@ static NSString *basicCellWithIdentifier = @"basicCell";
         case TableViewSectionTentativeInvites:
         case TableViewSectionDeclinedInvites:
         {
-            return YES;
+            return self.userCanEdit;
             break;
         }
             

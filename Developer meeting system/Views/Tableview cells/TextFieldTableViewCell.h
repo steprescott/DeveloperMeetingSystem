@@ -10,6 +10,7 @@
 
 @interface TextFieldTableViewCell : UITableViewCell
 
+@property (nonatomic, assign) BOOL enabled;
 @property (weak, nonatomic) IBOutlet UILabel *label;
 @property (weak, nonatomic) IBOutlet UITextField *textField;
 

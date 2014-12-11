@@ -34,7 +34,7 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
 @property (nonatomic, strong) NSIndexPath *selectedIndexPath;
 @property (nonatomic, strong) Meeting *selectedMeeting;
 
-
+- (IBAction)logOutButtonWasTapped:(id)sender;
 - (IBAction)addNewMeetingButtonWasTapped:(id)sender;
 
 @end
@@ -77,24 +77,23 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
         return;
     }
     
-//    [SVProgressHUD showWithStatus:@"Synchronizing data" maskType:SVProgressHUDMaskTypeBlack];
-//    
-//    NSError *synchronizeError;
-//    [WebServiceClient synchronizeWithError:&synchronizeError];
-//    
-//    if(synchronizeError)
-//    {
-//        [SVProgressHUD showErrorWithStatus:@"Failed to synchronize" maskType:SVProgressHUDMaskTypeBlack];
-//    }
-//    else
-//    {
-//        [SVProgressHUD showSuccessWithStatus:@"Synchronized" maskType:SVProgressHUDMaskTypeBlack];
-//    }
+    if(![[User activeUser].role isEqualToString:@"Host"])
+    {
+        self.navigationItem.rightBarButtonItem = nil;
+    }
     
     self.view.alpha = 1.0;
     [self.collectionViewCalendarLayout scrollCollectionViewToClosetSectionToCurrentTimeAnimated:NO];
     [self.collectionView deselectItemAtIndexPath:self.selectedIndexPath animated:YES];
     self.selectedIndexPath = nil;
+}
+
+- (IBAction)logOutButtonWasTapped:(id)sender
+{
+    [WebServiceClient sharedInstance].userToken = nil;
+    [WebServiceClient sharedInstance].username = nil;
+    [ContextManager deleteAllData];
+    [self performSegueWithIdentifier:@"showLogin" sender:self];
 }
 
 - (IBAction)addNewMeetingButtonWasTapped:(id)sender
@@ -116,11 +115,6 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
 - (UIRectEdge)edgesForExtendedLayout
 {
     return UIRectEdgeNone;
-}
-
-- (BOOL)prefersStatusBarHidden
-{
-    return YES;
 }
 
 #pragma mark - NSFetchedResultsControllerDelegate

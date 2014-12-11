@@ -25,6 +25,7 @@
 {
     [super viewWillAppear:animated];
     self.textView.text = self.currentText;
+    self.textView.editable = self.enabled;
 }
 
 - (void)viewWillDisappear:(BOOL)animated

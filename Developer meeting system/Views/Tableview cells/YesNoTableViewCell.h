@@ -10,6 +10,7 @@
 
 @interface YesNoTableViewCell : UITableViewCell
 
+@property (nonatomic, assign) BOOL enabled;
 @property (weak, nonatomic) IBOutlet UILabel *label;
 
 - (BOOL)isYes;

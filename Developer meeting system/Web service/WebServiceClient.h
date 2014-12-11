@@ -15,8 +15,11 @@ typedef NS_ENUM(NSUInteger, RequestType) {
     RequestTypeDELETE
 };
 
+static NSString *webServiceClientErrorMessage = @"WebServiceClientErrorMessage";
+
 @interface WebServiceClient : NSObject
 
+@property (nonatomic, strong) NSString *userToken;
 @property (nonatomic, strong) NSString *username;
 
 + (instancetype)sharedInstance;

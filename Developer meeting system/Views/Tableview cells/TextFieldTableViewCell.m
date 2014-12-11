@@ -10,6 +10,10 @@
 
 @implementation TextFieldTableViewCell
 
-
+-(void)setEnabled:(BOOL)enabled
+{
+    _enabled = enabled;
+    self.textField.enabled = self.enabled;
+}
 
 @end

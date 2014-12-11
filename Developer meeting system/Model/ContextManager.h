@@ -15,5 +15,6 @@
 
 + (NSManagedObjectContext *)mainContext;
 + (NSManagedObjectContext *)newPrivateContext;
++ (void)deleteAllData;
 
 @end

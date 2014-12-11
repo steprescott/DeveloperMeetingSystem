@@ -8,7 +8,6 @@
 
 #import "WebServiceClient.h"
 #import "ContextManager.h"
-#import <AFNetworking/AFNetworking.h>
 
 static NSString *webAPIBaseURLString = @"http://www.shouldibuyamac.co.uk/api";
 static NSString *webAPIKey = @"3456973d-a4da-486f-a595-73eba8854e07";
@@ -35,13 +34,6 @@ static NSString *DELETEWebMethod  = @"DELETE";
 
 static NSString *webserviceClientErrorDomain = @"DeveloperMeetingSystem.webServiceClientErrorDomain";
 static NSString *HTTPErrorDomain = @"DeveloperMeetingSystem.HTTPErrorDomain";
-static NSString *webServiceClientErrorMessage = @"WebServiceClientErrorMessage";
-
-@interface WebServiceClient ()
-
-@property (nonatomic, strong) NSString *userToken;
-
-@end
 
 @implementation WebServiceClient
 
@@ -81,8 +73,8 @@ static NSString *webServiceClientErrorMessage = @"WebServiceClientErrorMessage";
     
     if(APIError)
     {
-        NSLog(@"Error when talking to the API. %@", APIError.localizedDescription);
         *error = APIError;
+        return;
     }
     
     [MeetingRoom importMeetingRooms:meetingRooms intoContext:context];
@@ -102,7 +94,7 @@ static NSString *webServiceClientErrorMessage = @"WebServiceClientErrorMessage";
 
 + (NSString *)reasonForStatusCode:(NSInteger)statusCode
 {
-    NSString *reason = @"Unknown";
+    NSString *reason = @"Unknown error";
     
     switch (statusCode)
     {
@@ -302,7 +294,7 @@ static NSString *webServiceClientErrorMessage = @"WebServiceClientErrorMessage";
     
     if(error)
     {
-        if([response statusCode] != 200)
+        if(response.statusCode != 200 && response.statusCode != 201)
         {
             NSString *message = JSON[@"Message"];
             NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:responseError.userInfo];
@@ -310,6 +302,10 @@ static NSString *webServiceClientErrorMessage = @"WebServiceClientErrorMessage";
             if(message)
             {
                 userInfo[webServiceClientErrorMessage] = message;
+            }
+            else
+            {
+                userInfo[webServiceClientErrorMessage] = [WebServiceClient reasonForStatusCode:response.statusCode];
             }
             
             *error = [NSError errorWithDomain:HTTPErrorDomain

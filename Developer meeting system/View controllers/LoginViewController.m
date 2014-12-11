@@ -8,6 +8,7 @@
 
 #import "LoginViewController.h"
 #import "WebServiceClient.h"
+#import "ContextManager.h"
 
 @interface LoginViewController ()
 @property (weak, nonatomic) IBOutlet UITextField *usernameTextField;
@@ -40,7 +41,7 @@
                                                       
                                                       if(synchronizeError)
                                                       {
-                                                          NSLog(@"Error when synchronizing. %@", synchronizeError.localizedDescription);
+                                                          [SVProgressHUD showErrorWithStatus:synchronizeError.userInfo[webServiceClientErrorMessage] maskType:SVProgressHUDMaskTypeBlack];
                                                       }
                                                       else
                                                       {
@@ -49,7 +50,7 @@
                                                       }
                                                   }
                                                   failure:^(NSError *error) {
-                                                      [SVProgressHUD showErrorWithStatus:error.localizedDescription];
+                                                      [SVProgressHUD showErrorWithStatus:error.userInfo[webServiceClientErrorMessage] maskType:SVProgressHUDMaskTypeBlack];
                                                   }];
 }
 

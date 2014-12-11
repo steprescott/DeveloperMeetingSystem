@@ -100,6 +100,11 @@
                     </collectionView>
                     <tabBarItem key="tabBarItem" title="Item" id="mTg-gw-1qN"/>
                     <navigationItem key="navigationItem" title="Calendar" id="7R4-K7-5HD">
+                        <barButtonItem key="leftBarButtonItem" title="Log out" id="Ivy-Y1-mkA">
+                            <connections>
+                                <action selector="logOutButtonWasTapped:" destination="ks2-sG-263" id="cIF-LF-4Ib"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="JPL-zw-tnl">
                             <connections>
                                 <action selector="addNewMeetingButtonWasTapped:" destination="ks2-sG-263" id="jnn-nr-ibH"/>
@@ -109,11 +114,12 @@
                     <connections>
                         <segue destination="bvb-5G-JZN" kind="presentation" identifier="showMeetingDetails" modalPresentationStyle="formSheet" id="EiR-ny-Yfr"/>
                         <segue destination="vqV-a7-aHN" kind="presentation" identifier="showLoginNoAnimation" animates="NO" id="Jd4-yO-hRq"/>
+                        <segue destination="vqV-a7-aHN" kind="presentation" identifier="showLogin" id="ZVK-c1-w4z"/>
                     </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Lxf-dt-Evs" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="19" y="-1556"/>
+            <point key="canvasLocation" x="19" y="-1648"/>
         </scene>
         <!--Calendar-->
         <scene sceneID="UC7-av-68a">
@@ -130,7 +136,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SCU-qv-1Oi" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-834" y="-1556"/>
+            <point key="canvasLocation" x="-834" y="-1648"/>
         </scene>
         <!--Meeting details-->
         <scene sceneID="MBJ-vH-119">
@@ -432,7 +438,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Xj6-3K-tJJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2451" y="-1556"/>
+            <point key="canvasLocation" x="2451" y="-1648"/>
         </scene>
         <!--Searchable Selectable Table View Controller-->
         <scene sceneID="l9s-2u-bfs">
@@ -522,6 +528,6 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="6S0-TO-JiA"/>
-        <segue reference="Jd4-yO-hRq"/>
+        <segue reference="ZVK-c1-w4z"/>
     </inferredMetricsTieBreakers>
 </document>

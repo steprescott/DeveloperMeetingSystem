@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Invite+DMS.h"
 
 typedef NS_ENUM(NSUInteger, RequestType) {
     RequestTypeGET = 0,
@@ -40,6 +41,7 @@ static NSString *webServiceClientErrorMessage = @"WebServiceClientErrorMessage";
 - (id)GETAllMeetingsWithError:(NSError **)error;
 
 - (id)POSTMeeting:(NSDictionary *)JSON error:(NSError **)error;
+- (id)POSTAttendenceForMeetingWithID:(NSString *)meetingID withStatus:(InviteStatus)inviteStatus error:(NSError **)error;
 
 - (id)PUTMeeting:(NSDictionary *)JSON error:(NSError **)error;
 

@@ -45,6 +45,12 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
 {
     [super viewDidLoad];
     
+    UIBarButtonItem *refreshBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh
+                                                                                          target:self
+                                                                                          action:@selector(refreshButtonWasTapped)];
+    
+    self.navigationItem.rightBarButtonItems = @[refreshBarButtonItem, self.navigationItem.rightBarButtonItem];
+    
     self.collectionViewCalendarLayout = [[MSCollectionViewCalendarLayout alloc] init];
     self.collectionViewCalendarLayout.delegate = self;
     self.collectionView.collectionViewLayout = self.collectionViewCalendarLayout;
@@ -79,7 +85,11 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
     
     if(![[User activeUser].role isEqualToString:@"Host"])
     {
-        self.navigationItem.rightBarButtonItem = nil;
+        self.navigationItem.rightBarButtonItem.enabled = NO;
+    }
+    else
+    {
+        self.navigationItem.rightBarButtonItem.enabled = YES;
     }
     
     self.view.alpha = 1.0;
@@ -94,6 +104,23 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
     [WebServiceClient sharedInstance].username = nil;
     [ContextManager deleteAllData];
     [self performSegueWithIdentifier:@"showLogin" sender:self];
+}
+
+- (void)refreshButtonWasTapped
+{
+    [SVProgressHUD showWithStatus:@"Synchronizing data" maskType:SVProgressHUDMaskTypeBlack];
+    
+    NSError *synchronizeError;
+    [WebServiceClient synchronizeWithError:&synchronizeError];
+    
+    if(synchronizeError)
+    {
+        [SVProgressHUD showErrorWithStatus:synchronizeError.userInfo[webServiceClientErrorMessage] maskType:SVProgressHUDMaskTypeBlack];
+    }
+    else
+    {
+        [SVProgressHUD showSuccessWithStatus:@"Synchronized" maskType:SVProgressHUDMaskTypeBlack];
+    }
 }
 
 - (IBAction)addNewMeetingButtonWasTapped:(id)sender

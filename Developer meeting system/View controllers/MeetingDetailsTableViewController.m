@@ -223,45 +223,52 @@ static NSString *basicCellWithIdentifier = @"basicCell";
     YesNoTableViewCell *isPublicCell = (YesNoTableViewCell *)[self.dateCellsController cellForIndexPath:self.isPublicIndexPath ignoringPickerCells:YES];
     self.meetingSubject = subjectCell.textField.text;
     
-    if(!self.meeting)
+    NSManagedObjectContext *context = [ContextManager newPrivateContext];
+    
+    if(self.meeting)
     {
-        self.meeting = [Meeting sqk_insertInContext:[ContextManager mainContext]];
+        self.meeting = (Meeting *)[context objectWithID:self.meeting.objectID];
+    }
+    else
+    {
+        self.meeting = [Meeting sqk_insertInContext:context];
     }
     
     self.meeting.subject = self.meetingSubject;
     self.meeting.isPublic = @([isPublicCell isYes]);
     self.meeting.startDate = self.meetingStartDate;
     self.meeting.endDate = self.meetingEndDate;
-    self.meeting.meetingRoom = self.meetingMeetingRoom;
+    self.meeting.meetingRoom = (MeetingRoom *)[context objectWithID:self.meetingMeetingRoom.objectID];
     self.meeting.notes = self.meetingNotes;
     self.meeting.hasBeenUpdated = @NO;
+    self.meeting.host = (User *)[context objectWithID:[User activeUser].objectID];
     
-    [self.meeting.invites makeObjectsPerformSelector:@selector(sqk_deleteObject)];
+    [self.meeting removeInvites:self.meeting.invites];
     
     [[self.invitesDictionary[@(InviteStatusInvited)] allObjects] enumerateObjectsUsingBlock:^(User *user, NSUInteger idx, BOOL *stop) {
         [Invite createInviteForMeeting:self.meeting
-                              withUser:user
+                              withUser:(User *)[context objectWithID:user.objectID]
                              forStatus:InviteStatusInvited
                            intoContext:self.meeting.managedObjectContext];
     }];
     
     [[self.invitesDictionary[@(InviteStatusAccepted)] allObjects] enumerateObjectsUsingBlock:^(User *user, NSUInteger idx, BOOL *stop) {
         [Invite createInviteForMeeting:self.meeting
-                              withUser:user
+                              withUser:(User *)[context objectWithID:user.objectID]
                              forStatus:InviteStatusAccepted
                            intoContext:self.meeting.managedObjectContext];
     }];
     
     [[self.invitesDictionary[@(InviteStatusTentative)] allObjects] enumerateObjectsUsingBlock:^(User *user, NSUInteger idx, BOOL *stop) {
         [Invite createInviteForMeeting:self.meeting
-                              withUser:user
+                              withUser:(User *)[context objectWithID:user.objectID]
                              forStatus:InviteStatusTentative
                            intoContext:self.meeting.managedObjectContext];
     }];
     
     [[self.invitesDictionary[@(InviteStatusDeclined)] allObjects] enumerateObjectsUsingBlock:^(User *user, NSUInteger idx, BOOL *stop) {
         [Invite createInviteForMeeting:self.meeting
-                              withUser:user
+                              withUser:(User *)[context objectWithID:user.objectID]
                              forStatus:InviteStatusDeclined
                            intoContext:self.meeting.managedObjectContext];
     }];
@@ -292,6 +299,7 @@ static NSString *basicCellWithIdentifier = @"basicCell";
     }
     else
     {
+        [context save:NULL];
         [SVProgressHUD showSuccessWithStatus:successMessage maskType:SVProgressHUDMaskTypeBlack];
         [self dismissViewControllerAnimated:YES completion:nil];
     }
@@ -577,6 +585,7 @@ static NSString *basicCellWithIdentifier = @"basicCell";
                         };
                         
                         [self.navigationController showViewController:searchableSelectableTableViewController sender:self];
+                        [self.dateCellsController hidePicker];
                     }
                     break;
                 }
@@ -591,6 +600,7 @@ static NSString *basicCellWithIdentifier = @"basicCell";
                     };
                     
                     [self.navigationController showViewController:textViewViewController sender:self];
+                    [self.dateCellsController hidePicker];
                     break;
                 }
             }

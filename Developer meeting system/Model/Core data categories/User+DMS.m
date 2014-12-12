@@ -57,6 +57,11 @@
     return user;
 }
 
++ (User *)activeUser
+{
+    return [self userWithUsername:[WebServiceClient sharedInstance].username inContext:[ContextManager mainContext]];
+}
+
 + (User *)userWithUsername:(NSString *)username inContext:(NSManagedObjectContext *)context
 {
     NSFetchRequest *request = [User sqk_fetchRequest];
@@ -71,11 +76,6 @@
     }
     
     return [objects firstObject];
-}
-
-+ (User *)activeUser
-{
-    return [self userWithUsername:[WebServiceClient sharedInstance].username inContext:[ContextManager mainContext]];
 }
 
 + (NSSet *)usernamesForUsers:(NSSet *)users

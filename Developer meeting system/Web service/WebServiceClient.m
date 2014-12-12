@@ -26,6 +26,7 @@ static NSString *meetingsEndPoint = @"meeting";
 static NSString *meetingRoomEndPoint = @"meetingRoom";
 static NSString *userDetailsEndPoint = @"userDetails";
 static NSString *rolesEndPoint = @"role";
+static NSString *attendenceEndPoint = @"attendence";
 
 static NSString *GETWebMethod  = @"GET";
 static NSString *POSTWebMethod = @"POST";
@@ -63,6 +64,8 @@ static NSString *HTTPErrorDomain = @"DeveloperMeetingSystem.HTTPErrorDomain";
 
 + (void)synchronizeWithError:(NSError **)error
 {
+    [ContextManager deleteAllData];
+    
     NSManagedObjectContext *context = [ContextManager newPrivateContext];
     
     NSError *APIError;
@@ -223,6 +226,16 @@ static NSString *HTTPErrorDomain = @"DeveloperMeetingSystem.HTTPErrorDomain";
     NSURLRequest *request = [self requestForAPIEndPoint:meetingsEndPoint
                                               webMethod:POSTWebMethod
                                              parameters:JSON];
+    
+    return [self sendSynchronousRequest:request error:error];
+}
+
+- (id)POSTAttendenceForMeetingWithID:(NSString *)meetingID withStatus:(InviteStatus)inviteStatus error:(NSError **)error
+{
+    NSURLRequest *request = [self requestForAPIEndPoint:attendenceEndPoint
+                                              webMethod:POSTWebMethod
+                                             parameters:@{@"MeetingId" : meetingID,
+                                                          @"MeetingAttendence" : @(inviteStatus - 1)}];
     
     return [self sendSynchronousRequest:request error:error];
 }

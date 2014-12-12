@@ -23,7 +23,6 @@
 		4A6E851E1A2FDBBC00FBF70D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A6E851C1A2FDBBC00FBF70D /* Main.storyboard */; };
 		4A6E85201A2FDBBC00FBF70D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A6E851F1A2FDBBC00FBF70D /* Images.xcassets */; };
 		4A6E85231A2FDBBC00FBF70D /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A6E85211A2FDBBC00FBF70D /* LaunchScreen.xib */; };
-		4A6E853B1A2FDC3200FBF70D /* InvitesMasterTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6E853A1A2FDC3200FBF70D /* InvitesMasterTableViewController.m */; };
 		4A6E85461A2FDEFA00FBF70D /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6E85451A2FDEFA00FBF70D /* LoginViewController.m */; };
 		4A6E85491A2FEC2D00FBF70D /* CalendarCollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6E85481A2FEC2D00FBF70D /* CalendarCollectionViewController.m */; };
 		4A6E854D1A2FEF6700FBF70D /* WebServiceClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6E854C1A2FEF6700FBF70D /* WebServiceClient.m */; };
@@ -42,6 +41,8 @@
 		4A6EC4FF1A3674D90000ADED /* SearchableSelectableTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6EC4FE1A3674D90000ADED /* SearchableSelectableTableViewController.m */; };
 		4A8AD81E1A3781EF009E18E7 /* Meeting.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A8AD81D1A3781EF009E18E7 /* Meeting.m */; };
 		4A8AD8211A3781F0009E18E7 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A8AD8201A3781F0009E18E7 /* User.m */; };
+		4AAF769B1A3A5C8A00E68DBF /* InvitesMasterSearchableTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AAF769A1A3A5C8A00E68DBF /* InvitesMasterSearchableTableViewController.m */; };
+		4AAF769E1A3A705200E68DBF /* InviteDetailTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AAF769D1A3A705200E68DBF /* InviteDetailTableViewController.m */; };
 		BA173CBABCA1E34BEF426CD9 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8BC6704907BB46C45BDEDC4 /* libPods.a */; };
 		C22043183BE4798D1E875D69 /* libPods-Developer meeting systemTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D4D912310CBC0F7D4B6168F /* libPods-Developer meeting systemTests.a */; };
 /* End PBXBuildFile section */
@@ -87,8 +88,6 @@
 		4A6E85221A2FDBBC00FBF70D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		4A6E85281A2FDBBC00FBF70D /* Developer meeting systemTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Developer meeting systemTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A6E852D1A2FDBBC00FBF70D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4A6E85391A2FDC3200FBF70D /* InvitesMasterTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InvitesMasterTableViewController.h; sourceTree = "<group>"; };
-		4A6E853A1A2FDC3200FBF70D /* InvitesMasterTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InvitesMasterTableViewController.m; sourceTree = "<group>"; };
 		4A6E85441A2FDEFA00FBF70D /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		4A6E85451A2FDEFA00FBF70D /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		4A6E85471A2FEC2D00FBF70D /* CalendarCollectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalendarCollectionViewController.h; sourceTree = "<group>"; };
@@ -126,6 +125,10 @@
 		4A8AD81D1A3781EF009E18E7 /* Meeting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Meeting.m; sourceTree = "<group>"; };
 		4A8AD81F1A3781F0009E18E7 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
 		4A8AD8201A3781F0009E18E7 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		4AAF76991A3A5C8A00E68DBF /* InvitesMasterSearchableTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InvitesMasterSearchableTableViewController.h; sourceTree = "<group>"; };
+		4AAF769A1A3A5C8A00E68DBF /* InvitesMasterSearchableTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InvitesMasterSearchableTableViewController.m; sourceTree = "<group>"; };
+		4AAF769C1A3A705200E68DBF /* InviteDetailTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InviteDetailTableViewController.h; sourceTree = "<group>"; };
+		4AAF769D1A3A705200E68DBF /* InviteDetailTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InviteDetailTableViewController.m; sourceTree = "<group>"; };
 		88598EBC11613AA23BB683C0 /* Pods-Developer meeting systemTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Developer meeting systemTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Developer meeting systemTests/Pods-Developer meeting systemTests.release.xcconfig"; sourceTree = "<group>"; };
 		9D4D912310CBC0F7D4B6168F /* libPods-Developer meeting systemTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Developer meeting systemTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B51ED1373F60EC48DD5D31E0 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
@@ -284,8 +287,10 @@
 				4A6EC4FE1A3674D90000ADED /* SearchableSelectableTableViewController.m */,
 				4A6EC4F71A3661CD0000ADED /* TextViewViewController.h */,
 				4A6EC4F81A3661CD0000ADED /* TextViewViewController.m */,
-				4A6E85391A2FDC3200FBF70D /* InvitesMasterTableViewController.h */,
-				4A6E853A1A2FDC3200FBF70D /* InvitesMasterTableViewController.m */,
+				4AAF76991A3A5C8A00E68DBF /* InvitesMasterSearchableTableViewController.h */,
+				4AAF769A1A3A5C8A00E68DBF /* InvitesMasterSearchableTableViewController.m */,
+				4AAF769C1A3A705200E68DBF /* InviteDetailTableViewController.h */,
+				4AAF769D1A3A705200E68DBF /* InviteDetailTableViewController.m */,
 			);
 			path = "View controllers";
 			sourceTree = "<group>";
@@ -543,11 +548,12 @@
 				4A6E85151A2FDBBC00FBF70D /* AppDelegate.m in Sources */,
 				4A33DCEF1A35E32D0032D553 /* User+DMS.m in Sources */,
 				4A6E85641A2FEFA400FBF70D /* CurrentTimeIndicator.m in Sources */,
-				4A6E853B1A2FDC3200FBF70D /* InvitesMasterTableViewController.m in Sources */,
+				4AAF769E1A3A705200E68DBF /* InviteDetailTableViewController.m in Sources */,
 				4A6E85651A2FEFA400FBF70D /* DayColumnHeader.m in Sources */,
 				4A6EC4E71A3611760000ADED /* MeetingRoom+DMS.m in Sources */,
 				4A6E85681A2FEFA400FBF70D /* TimeRowHeader.m in Sources */,
 				4A207A521A32111C00C7D8F0 /* MeetingDetailsTableViewController.m in Sources */,
+				4AAF769B1A3A5C8A00E68DBF /* InvitesMasterSearchableTableViewController.m in Sources */,
 				4A6E85631A2FEFA400FBF70D /* CurrentTimeGridline.m in Sources */,
 				4A6E854D1A2FEF6700FBF70D /* WebServiceClient.m in Sources */,
 				4A6E85491A2FEC2D00FBF70D /* CalendarCollectionViewController.m in Sources */,

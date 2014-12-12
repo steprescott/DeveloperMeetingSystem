@@ -8,11 +8,6 @@
 
 #import "ContextManager.h"
 
-#import "Meeting.h"
-#import "MeetingRoom.h"
-#import "User.h"
-#import "Invite.h"
-
 static SQKContextManager *sharedManager;
 
 @implementation ContextManager

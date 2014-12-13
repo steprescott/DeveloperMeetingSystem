@@ -2,7 +2,7 @@
 //  User.m
 //  Developer meeting system
 //
-//  Created by Ste Prescott on 09/12/2014.
+//  Created by Ste Prescott on 13/12/2014.
 //  Copyright (c) 2014 Ste Prescott. All rights reserved.
 //
 

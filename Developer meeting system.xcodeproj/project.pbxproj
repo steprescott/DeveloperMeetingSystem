@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A0826BD1A3CE2BC0004AA07 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A0826BC1A3CE2BC0004AA07 /* User.m */; };
 		4A207A351A31FBC900C7D8F0 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4A207A331A31FBC900C7D8F0 /* Model.xcdatamodeld */; };
 		4A207A431A31FDB100C7D8F0 /* Meeting+DMS.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A207A421A31FDB100C7D8F0 /* Meeting+DMS.m */; };
 		4A207A491A31FF8100C7D8F0 /* ContextManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A207A481A31FF8100C7D8F0 /* ContextManager.m */; };
@@ -40,7 +41,6 @@
 		4A6EC4F91A3661CD0000ADED /* TextViewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6EC4F81A3661CD0000ADED /* TextViewViewController.m */; };
 		4A6EC4FF1A3674D90000ADED /* SearchableSelectableTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A6EC4FE1A3674D90000ADED /* SearchableSelectableTableViewController.m */; };
 		4A8AD81E1A3781EF009E18E7 /* Meeting.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A8AD81D1A3781EF009E18E7 /* Meeting.m */; };
-		4A8AD8211A3781F0009E18E7 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A8AD8201A3781F0009E18E7 /* User.m */; };
 		4AAF769B1A3A5C8A00E68DBF /* InvitesMasterSearchableTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AAF769A1A3A5C8A00E68DBF /* InvitesMasterSearchableTableViewController.m */; };
 		4AAF769E1A3A705200E68DBF /* InviteDetailTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AAF769D1A3A705200E68DBF /* InviteDetailTableViewController.m */; };
 		BA173CBABCA1E34BEF426CD9 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D8BC6704907BB46C45BDEDC4 /* libPods.a */; };
@@ -59,6 +59,8 @@
 
 /* Begin PBXFileReference section */
 		4634D17D3E2CCBF2065B9A65 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		4A0826BB1A3CE2BC0004AA07 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		4A0826BC1A3CE2BC0004AA07 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		4A207A341A31FBC900C7D8F0 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		4A207A411A31FDB100C7D8F0 /* Meeting+DMS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Meeting+DMS.h"; sourceTree = "<group>"; };
 		4A207A421A31FDB100C7D8F0 /* Meeting+DMS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Meeting+DMS.m"; sourceTree = "<group>"; };
@@ -123,8 +125,6 @@
 		4A6EC4FE1A3674D90000ADED /* SearchableSelectableTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchableSelectableTableViewController.m; sourceTree = "<group>"; };
 		4A8AD81C1A3781EF009E18E7 /* Meeting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Meeting.h; sourceTree = "<group>"; };
 		4A8AD81D1A3781EF009E18E7 /* Meeting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Meeting.m; sourceTree = "<group>"; };
-		4A8AD81F1A3781F0009E18E7 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
-		4A8AD8201A3781F0009E18E7 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		4AAF76991A3A5C8A00E68DBF /* InvitesMasterSearchableTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InvitesMasterSearchableTableViewController.h; sourceTree = "<group>"; };
 		4AAF769A1A3A5C8A00E68DBF /* InvitesMasterSearchableTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InvitesMasterSearchableTableViewController.m; sourceTree = "<group>"; };
 		4AAF769C1A3A705200E68DBF /* InviteDetailTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InviteDetailTableViewController.h; sourceTree = "<group>"; };
@@ -168,10 +168,10 @@
 		4A207A361A31FD7200C7D8F0 /* Managed objects */ = {
 			isa = PBXGroup;
 			children = (
+				4A0826BB1A3CE2BC0004AA07 /* User.h */,
+				4A0826BC1A3CE2BC0004AA07 /* User.m */,
 				4A44A1AD1A38ABAB00B17A53 /* Invite.h */,
 				4A44A1AE1A38ABAB00B17A53 /* Invite.m */,
-				4A8AD81F1A3781F0009E18E7 /* User.h */,
-				4A8AD8201A3781F0009E18E7 /* User.m */,
 				4A8AD81C1A3781EF009E18E7 /* Meeting.h */,
 				4A8AD81D1A3781EF009E18E7 /* Meeting.m */,
 				4A6EC4EB1A3612880000ADED /* MeetingRoom.h */,
@@ -553,6 +553,7 @@
 				4A6EC4E71A3611760000ADED /* MeetingRoom+DMS.m in Sources */,
 				4A6E85681A2FEFA400FBF70D /* TimeRowHeader.m in Sources */,
 				4A207A521A32111C00C7D8F0 /* MeetingDetailsTableViewController.m in Sources */,
+				4A0826BD1A3CE2BC0004AA07 /* User.m in Sources */,
 				4AAF769B1A3A5C8A00E68DBF /* InvitesMasterSearchableTableViewController.m in Sources */,
 				4A6E85631A2FEFA400FBF70D /* CurrentTimeGridline.m in Sources */,
 				4A6E854D1A2FEF6700FBF70D /* WebServiceClient.m in Sources */,
@@ -568,7 +569,6 @@
 				4A6E85671A2FEFA400FBF70D /* Gridline.m in Sources */,
 				4A207A351A31FBC900C7D8F0 /* Model.xcdatamodeld in Sources */,
 				4A6E85661A2FEFA400FBF70D /* DayColumnHeaderBackground.m in Sources */,
-				4A8AD8211A3781F0009E18E7 /* User.m in Sources */,
 				4A3862CA1A35AAC500513D13 /* TextFieldTableViewCell.m in Sources */,
 				4A6EC4F31A36568E0000ADED /* SelectableListTableViewController.m in Sources */,
 				4A6E85691A2FEFA400FBF70D /* TimeRowHeaderBackground.m in Sources */,

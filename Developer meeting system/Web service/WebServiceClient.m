@@ -10,7 +10,7 @@
 #import "ContextManager.h"
 
 static NSString *webAPIBaseURLString = @"http://www.shouldibuyamac.co.uk/api";
-static NSString *webAPIKey = @"3456973d-a4da-486f-a595-73eba8854e07";
+static NSString *webAPIKey = @"65175bab-9c9e-45a0-bb41-e200f7af6f5f";
 
 static NSString *debugUserTokenAdmin = @"1bb78f99-75de-417c-af07-5db40d362bb3";
 static NSString *debugUsernameAdmin = @"Admin";

@@ -124,7 +124,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OZt-1n-T9Z">
-                                            <rect key="frame" x="15" y="0.0" width="42" height="44"/>
+                                            <rect key="frame" x="20" y="0.0" width="42" height="44"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
@@ -137,10 +137,10 @@
                                     </subviews>
                                     <constraints>
                                         <constraint firstAttribute="trailingMargin" secondItem="xlH-9c-j0Z" secondAttribute="trailing" constant="-8" id="6dD-Jg-Xqu"/>
-                                        <constraint firstItem="OZt-1n-T9Z" firstAttribute="leading" secondItem="Zvw-pX-Y6h" secondAttribute="leadingMargin" constant="7" id="AJD-ND-4MA"/>
+                                        <constraint firstItem="OZt-1n-T9Z" firstAttribute="leading" secondItem="Zvw-pX-Y6h" secondAttribute="leadingMargin" constant="12" id="AJD-ND-4MA"/>
                                         <constraint firstItem="OZt-1n-T9Z" firstAttribute="top" secondItem="xlH-9c-j0Z" secondAttribute="top" id="P6X-h8-X2z"/>
                                         <constraint firstItem="OZt-1n-T9Z" firstAttribute="bottom" secondItem="xlH-9c-j0Z" secondAttribute="bottom" id="dgB-ar-Hx9"/>
-                                        <constraint firstItem="xlH-9c-j0Z" firstAttribute="leading" secondItem="OZt-1n-T9Z" secondAttribute="trailing" constant="16" id="r8q-Ye-GEj"/>
+                                        <constraint firstItem="xlH-9c-j0Z" firstAttribute="leading" secondItem="OZt-1n-T9Z" secondAttribute="trailing" constant="11" id="r8q-Ye-GEj"/>
                                         <constraint firstAttribute="bottomMargin" secondItem="OZt-1n-T9Z" secondAttribute="bottom" constant="-9" id="yAm-WH-IMK"/>
                                         <constraint firstItem="OZt-1n-T9Z" firstAttribute="top" secondItem="Zvw-pX-Y6h" secondAttribute="top" id="z8F-3p-gUY"/>
                                     </constraints>
@@ -156,7 +156,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="250" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nwh-7b-zXe">
-                                            <rect key="frame" x="15" y="1" width="425" height="44"/>
+                                            <rect key="frame" x="20" y="1" width="425" height="44"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
@@ -175,9 +175,9 @@
                                     <constraints>
                                         <constraint firstItem="uoV-UB-UEU" firstAttribute="top" secondItem="JZA-nd-pSN" secondAttribute="topMargin" id="0K8-7i-KIp"/>
                                         <constraint firstItem="uoV-UB-UEU" firstAttribute="trailing" secondItem="JZA-nd-pSN" secondAttribute="trailingMargin" id="flA-Bh-vuR"/>
-                                        <constraint firstItem="nwh-7b-zXe" firstAttribute="leading" secondItem="JZA-nd-pSN" secondAttribute="leadingMargin" constant="7" id="hz5-M5-lL3"/>
+                                        <constraint firstItem="nwh-7b-zXe" firstAttribute="leading" secondItem="JZA-nd-pSN" secondAttribute="leadingMargin" constant="12" id="hz5-M5-lL3"/>
                                         <constraint firstItem="nwh-7b-zXe" firstAttribute="top" secondItem="JZA-nd-pSN" secondAttribute="topMargin" constant="-7" id="px0-y1-Qxi"/>
-                                        <constraint firstItem="uoV-UB-UEU" firstAttribute="leading" secondItem="nwh-7b-zXe" secondAttribute="trailing" constant="13" id="qPo-hE-5qj"/>
+                                        <constraint firstItem="uoV-UB-UEU" firstAttribute="leading" secondItem="nwh-7b-zXe" secondAttribute="trailing" constant="8" id="qPo-hE-5qj"/>
                                         <constraint firstItem="uoV-UB-UEU" firstAttribute="centerY" secondItem="nwh-7b-zXe" secondAttribute="centerY" constant="-1" id="zEi-Z5-G1k"/>
                                     </constraints>
                                 </tableViewCellContentView>
@@ -321,9 +321,21 @@
                             <outlet property="delegate" destination="7bK-jq-Zjz" id="RA6-mI-bju"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Your invites" id="Zdf-7t-Un8"/>
+                    <navigationItem key="navigationItem" title="Your invites" id="Zdf-7t-Un8">
+                        <barButtonItem key="leftBarButtonItem" title="Log out" id="3Wr-fG-amy">
+                            <connections>
+                                <action selector="logoutButtonWasTapped:" destination="7bK-jq-Zjz" id="oFB-JE-yPc"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="f5x-Nb-FPg">
+                            <connections>
+                                <action selector="refreshButtonWasTapped:" destination="7bK-jq-Zjz" id="v9B-L8-ina"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <segue destination="vqV-a7-aHN" kind="presentation" identifier="showLoginNoAnimation" animates="NO" id="9pr-nR-AFo"/>
+                        <segue destination="vqV-a7-aHN" kind="presentation" identifier="showLogin" id="zbm-Pm-otE"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Rux-fX-hf1" sceneMemberID="firstResponder"/>
@@ -563,7 +575,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
+        <segue reference="zbm-Pm-otE"/>
         <segue reference="6S0-TO-JiA"/>
-        <segue reference="ZVK-c1-w4z"/>
     </inferredMetricsTieBreakers>
 </document>

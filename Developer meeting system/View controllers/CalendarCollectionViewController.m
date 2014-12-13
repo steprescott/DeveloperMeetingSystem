@@ -49,7 +49,7 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
                                                                                           target:self
                                                                                           action:@selector(refreshButtonWasTapped)];
     
-    self.navigationItem.rightBarButtonItems = @[refreshBarButtonItem, self.navigationItem.rightBarButtonItem];
+    self.navigationItem.rightBarButtonItems = @[self.navigationItem.rightBarButtonItem, refreshBarButtonItem];
     
     self.collectionViewCalendarLayout = [[MSCollectionViewCalendarLayout alloc] init];
     self.collectionViewCalendarLayout.delegate = self;
@@ -100,10 +100,7 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
 
 - (IBAction)logOutButtonWasTapped:(id)sender
 {
-    [WebServiceClient sharedInstance].userToken = nil;
-    [WebServiceClient sharedInstance].username = nil;
-    [ContextManager deleteAllData];
-    [self performSegueWithIdentifier:@"showLogin" sender:self];
+    [self logout];
 }
 
 - (void)refreshButtonWasTapped
@@ -115,12 +112,25 @@ NSString * const TimeRowHeaderReuseIdentifier = @"TimeRowHeaderReuseIdentifier";
     
     if(synchronizeError)
     {
+        if (synchronizeError.code == 498)
+        {
+            [self logout];
+        }
+        
         [SVProgressHUD showErrorWithStatus:synchronizeError.userInfo[webServiceClientErrorMessage] maskType:SVProgressHUDMaskTypeBlack];
     }
     else
     {
         [SVProgressHUD showSuccessWithStatus:@"Synchronized" maskType:SVProgressHUDMaskTypeBlack];
     }
+}
+
+- (void)logout
+{
+    [WebServiceClient sharedInstance].userToken = nil;
+    [WebServiceClient sharedInstance].username = nil;
+    [ContextManager deleteAllData];
+    [self performSegueWithIdentifier:@"showLogin" sender:self];
 }
 
 - (IBAction)addNewMeetingButtonWasTapped:(id)sender

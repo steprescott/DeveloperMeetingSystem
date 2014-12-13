@@ -207,21 +207,31 @@ static NSString *basicCellWithIdentifier = @"basicCell";
 - (IBAction)doneButtonWasTapped:(id)sender
 {
     [self.dateCellsController hidePicker];
+    TextFieldTableViewCell *subjectCell = (TextFieldTableViewCell *)[self.dateCellsController cellForIndexPath:self.subjectIndexPath ignoringPickerCells:YES];
+    YesNoTableViewCell *isPublicCell = (YesNoTableViewCell *)[self.dateCellsController cellForIndexPath:self.isPublicIndexPath ignoringPickerCells:YES];
+    self.meetingSubject = subjectCell.textField.text;
     
-    if([self isDate1:self.meetingStartDate aheadOfDate2:self.meetingEndDate])
+    if(!self.meetingSubject || [self.meetingSubject isEqualToString:@""])
+    {
+        [subjectCell.textField becomeFirstResponder];
+        [SVProgressHUD showErrorWithStatus:@"Please enter a subject\nfor the meeting" maskType:SVProgressHUDMaskTypeBlack];
+        return;
+    }
+    else if(!self.meetingMeetingRoom)
+    {
+        [SVProgressHUD showErrorWithStatus:@"Please select a\nmeeting room" maskType:SVProgressHUDMaskTypeBlack];
+        return;
+    }
+    else if([self isDate1:self.meetingStartDate aheadOfDate2:self.meetingEndDate])
     {
         [SVProgressHUD showErrorWithStatus:@"Start date can not be ahead or the same as end date" maskType:SVProgressHUDMaskTypeBlack];
         return;
     }
     else if(![self isDate1:self.meetingEndDate aheadOfDate2:self.meetingStartDate])
     {
-        [SVProgressHUD showErrorWithStatus:@"End date can not be before or the same as the start date." maskType:SVProgressHUDMaskTypeBlack];
+        [SVProgressHUD showErrorWithStatus:@"End date can not be before or the same as the start date" maskType:SVProgressHUDMaskTypeBlack];
         return;
     }
-    
-    TextFieldTableViewCell *subjectCell = (TextFieldTableViewCell *)[self.dateCellsController cellForIndexPath:self.subjectIndexPath ignoringPickerCells:YES];
-    YesNoTableViewCell *isPublicCell = (YesNoTableViewCell *)[self.dateCellsController cellForIndexPath:self.isPublicIndexPath ignoringPickerCells:YES];
-    self.meetingSubject = subjectCell.textField.text;
     
     NSManagedObjectContext *context = [ContextManager newPrivateContext];
     

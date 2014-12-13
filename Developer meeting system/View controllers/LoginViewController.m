@@ -22,9 +22,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    self.usernameTextField.text = @"HostUser";
-    self.passwordTextField.text = @"Password";
 }
 
 - (IBAction)loginButtonWasTapped:(id)sender

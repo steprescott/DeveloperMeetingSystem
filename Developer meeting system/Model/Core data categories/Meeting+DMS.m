@@ -53,11 +53,11 @@
                 managedObject.hasBeenUpdated = @YES;
                 
                 managedObject.meetingRoom = [MeetingRoom meetingRoomWithName:dictionary[@"MeetingRoom"][@"Name"] inContext:context];
-                
                 managedObject.host = [User userWithUsername:dictionary[@"HostUser"][@"Username"] inContext:context];
                 managedObject.host.firstName = dictionary[@"HostUser"][@"Firstname"];
                 managedObject.host.lastName = dictionary[@"HostUser"][@"Surname"];
                 managedObject.host.contactNumber = dictionary[@"HostUser"][@"ContactNumber"];
+                [managedObject.host addMeetingsHostingObject:managedObject];
                 
                 NSArray *invitedUsers = dictionary[@"UsersInvited"];
                 NSArray *acceptedUsers = dictionary[@"UsersAccepted"];

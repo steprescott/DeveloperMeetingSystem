@@ -2,7 +2,7 @@
 //  User.h
 //  Developer meeting system
 //
-//  Created by Ste Prescott on 09/12/2014.
+//  Created by Ste Prescott on 13/12/2014.
 //  Copyright (c) 2014 Ste Prescott. All rights reserved.
 //
 
@@ -20,7 +20,7 @@
 @property (nonatomic, retain) NSString * role;
 @property (nonatomic, retain) NSString * username;
 @property (nonatomic, retain) NSSet *invites;
-@property (nonatomic, retain) Meeting *meetingsHosting;
+@property (nonatomic, retain) NSSet *meetingsHosting;
 @end
 
 @interface User (CoreDataGeneratedAccessors)
@@ -29,5 +29,10 @@
 - (void)removeInvitesObject:(Invite *)value;
 - (void)addInvites:(NSSet *)values;
 - (void)removeInvites:(NSSet *)values;
+
+- (void)addMeetingsHostingObject:(Meeting *)value;
+- (void)removeMeetingsHostingObject:(Meeting *)value;
+- (void)addMeetingsHosting:(NSSet *)values;
+- (void)removeMeetingsHosting:(NSSet *)values;
 
 @end

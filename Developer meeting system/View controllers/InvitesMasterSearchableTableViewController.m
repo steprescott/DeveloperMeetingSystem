@@ -20,6 +20,9 @@ static NSString *cellIdentifier = @"inviteCell";
 @property (nonatomic, strong) Invite *selectedInvite;
 @property (nonatomic, strong) InviteDetailTableViewController *inviteDetailTableViewController;
 
+- (IBAction)logoutButtonWasTapped:(id)sender;
+- (IBAction)refreshButtonWasTapped:(id)sender;
+
 @end
 
 @implementation InvitesMasterSearchableTableViewController
@@ -49,6 +52,42 @@ static NSString *cellIdentifier = @"inviteCell";
     [super viewWillAppear:animated];
     self.activeUser = [User activeUser];
     [self reloadFetchedResultsControllers];
+}
+
+- (IBAction)logoutButtonWasTapped:(id)sender
+{
+    [WebServiceClient sharedInstance].userToken = nil;
+    [self logout];
+}
+
+- (IBAction)refreshButtonWasTapped:(id)sender
+{
+    [SVProgressHUD showWithStatus:@"Synchronizing data" maskType:SVProgressHUDMaskTypeBlack];
+    
+    NSError *synchronizeError;
+    [WebServiceClient synchronizeWithError:&synchronizeError];
+    
+    if(synchronizeError)
+    {
+        if (synchronizeError.code == 498)
+        {
+            [self logout];
+        }
+        
+        [SVProgressHUD showErrorWithStatus:synchronizeError.userInfo[webServiceClientErrorMessage] maskType:SVProgressHUDMaskTypeBlack];
+    }
+    else
+    {
+        [SVProgressHUD showSuccessWithStatus:@"Synchronized" maskType:SVProgressHUDMaskTypeBlack];
+    }
+}
+
+- (void)logout
+{
+    [WebServiceClient sharedInstance].userToken = nil;
+    [WebServiceClient sharedInstance].username = nil;
+    [ContextManager deleteAllData];
+    [self performSegueWithIdentifier:@"showLogin" sender:self];
 }
 
 - (NSString *)sectionKeyPathForSearchableFetchedResultsController:(SQKFetchedTableViewController *)controller
